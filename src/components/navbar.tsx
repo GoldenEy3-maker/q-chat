@@ -8,6 +8,7 @@ import {
   BiMoon,
   BiSun,
 } from "react-icons/bi";
+import { SignOutAlertDrawer } from "./sign-out-alert-drawer";
 import { Button } from "./ui/button";
 
 export const Navbar: React.FC = () => {
@@ -15,17 +16,17 @@ export const Navbar: React.FC = () => {
 
   return (
     <nav className="sticky left-0 top-0 hidden flex-col items-center gap-2 overflow-auto border-r px-2 py-4 md:flex">
-      <Button asChild variant="ghost" size="icon" className="md:h-10 md:w-10">
+      <Button asChild variant="ghost" size="icon" className="h-10 w-10">
         <Link href="#">
           <BiMessage className="text-xl" />
         </Link>
       </Button>
-      <Button asChild variant="ghost" size="icon" className="md:h-10 md:w-10">
+      <Button asChild variant="ghost" size="icon" className="h-10 w-10">
         <Link href="#">
           <BiGroup className="text-xl" />
         </Link>
       </Button>
-      <Button asChild variant="ghost" size="icon" className="md:h-10 md:w-10">
+      <Button asChild variant="ghost" size="icon" className="h-10 w-10">
         <Link href="#">
           <BiCog className="text-xl" />
         </Link>
@@ -33,7 +34,7 @@ export const Navbar: React.FC = () => {
       <Button
         variant="ghost"
         size="icon"
-        className="mt-auto hidden md:inline-flex md:h-10 md:w-10"
+        className="mt-auto h-10 w-10"
         onClick={() => setTheme(theme === "light" ? "dark" : "light")}
       >
         {theme === "light" ? (
@@ -42,16 +43,11 @@ export const Navbar: React.FC = () => {
           <BiMoon className="text-xl" />
         )}
       </Button>
-      <Button
-        asChild
-        variant="ghost"
-        size="icon"
-        className="hidden md:inline-flex md:h-10 md:w-10"
-      >
-        <Link href="#">
+      <SignOutAlertDrawer>
+        <Button variant="ghost" size="icon" className="h-10 w-10">
           <BiLogOut className="text-xl" />
-        </Link>
-      </Button>
+        </Button>
+      </SignOutAlertDrawer>
     </nav>
   );
 };

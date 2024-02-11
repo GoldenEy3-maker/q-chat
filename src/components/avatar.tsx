@@ -6,7 +6,7 @@ import {
 import { cn } from "~/libs/utils";
 
 type AvatarProps = {
-  src?: string;
+  src?: string | null;
   alt?: string;
   fallback?: string;
   isOnline?: boolean;
@@ -31,7 +31,7 @@ export const Avatar: React.FC<AvatarProps> = ({
       )}
     >
       <UiAvatar className="h-full w-full">
-        <AvatarImage src={src} alt={alt} />
+        <AvatarImage src={src ?? undefined} alt={alt} />
         <AvatarFallback>{fallback}</AvatarFallback>
       </UiAvatar>
     </div>
