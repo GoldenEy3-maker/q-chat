@@ -127,7 +127,7 @@ export const Sidebar: React.FC = () => {
         </Button>
         <NewChatDialogDrawer>
           <Button
-            className="absolute bottom-[5svh] right-8 z-10 h-12 w-12 rounded-full md:h-10 md:w-10"
+            className="absolute right-8 top-[80svh] z-10 h-12 w-12 rounded-full md:h-10 md:w-10"
             size="icon"
           >
             <BiPlus className="text-xl" />
