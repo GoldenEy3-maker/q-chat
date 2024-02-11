@@ -9,7 +9,7 @@ import { ScrollArea } from "./ui/scroll-area";
 
 export const Sidebar: React.FC = () => {
   return (
-    <aside className="grid max-h-svh grid-rows-[auto_1fr] overflow-hidden border-r md:sticky md:left-0 md:top-0">
+    <aside className="grid max-h-dvh grid-rows-[auto_1fr] overflow-hidden border-r md:sticky md:left-0 md:top-0">
       <header className="mb-1 mt-4 grid grid-cols-[auto_1fr] gap-2 px-4 md:grid-cols-[1fr]">
         <NavDrawer />
         <div className="relative">
