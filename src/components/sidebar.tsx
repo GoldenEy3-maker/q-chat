@@ -9,7 +9,7 @@ import { ScrollArea } from "./ui/scroll-area";
 
 export const Sidebar: React.FC = () => {
   return (
-    <aside className="grid max-h-screen grid-rows-[auto_1fr] overflow-hidden border-r md:sticky md:left-0 md:top-0">
+    <aside className="grid max-h-svh grid-rows-[auto_1fr] overflow-hidden border-r md:sticky md:left-0 md:top-0">
       <header className="mb-1 mt-4 grid grid-cols-[auto_1fr] gap-2 px-4 md:grid-cols-[1fr]">
         <NavDrawer />
         <div className="relative">
@@ -127,7 +127,7 @@ export const Sidebar: React.FC = () => {
         </Button>
         <NewChatDialogDrawer>
           <Button
-            className="absolute right-8 top-[80svh] z-10 h-12 w-12 rounded-full md:h-10 md:w-10"
+            className="absolute bottom-8 right-8 z-10 h-12 w-12 rounded-full md:h-10 md:w-10"
             size="icon"
           >
             <BiPlus className="text-xl" />
