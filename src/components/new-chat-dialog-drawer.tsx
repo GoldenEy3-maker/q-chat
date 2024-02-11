@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { BiSearch } from "react-icons/bi";
 import { useMediaQuery } from "usehooks-ts";
 import { api } from "~/libs/api";
+import { cn } from "~/libs/utils";
 import { Avatar } from "./avatar";
 import { Button } from "./ui/button";
 import {
@@ -161,7 +162,11 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
             <BiSearch />
           </span>
         </div>
-        <div className="grid gap-2 overflow-auto px-4 pb-4">
+        <div
+          className={cn("grid gap-2 px-4 pb-4", {
+            "overflow-auto": snap === 1,
+          })}
+        >
           {!getAllUsersApi.isLoading ? (
             <ScrollArea>
               <Button
