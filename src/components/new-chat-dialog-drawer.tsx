@@ -138,13 +138,13 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
     <Drawer
       open={isOpen}
       onOpenChange={setIsOpen}
-      snapPoints={["500px", 1]}
-      activeSnapPoint={snap}
-      setActiveSnapPoint={setSnap}
+      // snapPoints={["500px", 1]}
+      // activeSnapPoint={snap}
+      // setActiveSnapPoint={setSnap}
       shouldScaleBackground={false}
     >
       <DrawerTrigger asChild>{children}</DrawerTrigger>
-      <DrawerContent className="grid max-h-[96%] grid-rows-[auto_auto_1fr]">
+      <DrawerContent className="grid max-h-[95%] grid-rows-[auto_auto_1fr]">
         <DrawerHeader>
           <DrawerTitle>Новый собеседник</DrawerTitle>
           <DrawerDescription>
@@ -162,11 +162,7 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
             <BiSearch />
           </span>
         </div>
-        <div
-          className={cn("grid gap-2 px-4 pb-4", {
-            "overflow-auto": snap === 1,
-          })}
-        >
+        <div className={"grid gap-2 overflow-auto px-4 pb-4"}>
           {!getAllUsersApi.isLoading ? (
             <ScrollArea>
               <Button
