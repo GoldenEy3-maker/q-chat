@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { BiSearch } from "react-icons/bi";
+import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
 import { api } from "~/libs/api";
 import { Avatar } from "./avatar";
@@ -29,12 +30,27 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const getAllUsersApi = api.user.getAll.useQuery(undefined, {
     enabled: isOpen,
+  });
+
+  const getAllConversationsApi = api.conversation.getAll.useQuery(undefined, {
+    enabled: isOpen,
+  });
+
+  const createNewConversationApi = api.conversation.create.useMutation({
+    onSuccess() {
+      toast.success("Новый диалог успешно создан!");
+      setIsOpen(false);
+      void getAllConversationsApi.refetch();
+    },
+    onError(error) {
+      console.error(error);
+      toast.error(error.message);
+    },
   });
 
   const filteredUsers = useMemo(() => {
@@ -66,6 +82,7 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
               className="pl-9"
               value={searchValue}
               onChange={(event) => setSearchValue(event.target.value)}
+              disabled={createNewConversationApi.isLoading}
             />
             <span className="absolute inset-y-0 ml-3 flex items-center justify-center">
               <BiSearch />
@@ -73,227 +90,34 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
           </div>
           <ScrollArea className="px-6 pb-4">
             {!getAllUsersApi.isLoading ? (
-              <>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-              </>
+              filteredUsers.length > 0 ? (
+                filteredUsers.map((user) => (
+                  <Button
+                    key={user.id}
+                    variant="ghost"
+                    className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
+                    disabled={createNewConversationApi.isLoading}
+                    onClick={() =>
+                      createNewConversationApi.mutate({ companionId: user.id })
+                    }
+                  >
+                    <Avatar
+                      className="row-span-2"
+                      fallback={user.name?.at(0)}
+                      src={user.image}
+                      alt="Аватар пользователя"
+                      isOnline
+                    />
+                    <strong className="truncate">{user.name}</strong>
+                    <span className="truncate text-muted-foreground">
+                      Онлайн
+                    </span>
+                  </Button>
+                ))
+              ) : (
+                <p className="py-4 text-center">Ничего не найдено</p>
+              )
             ) : (
-              // filteredUsers.length > 0 ? (
-              //   filteredUsers.map((user) => (
-              //     <Button
-              //       key={user.id}
-              //       variant="ghost"
-              //       className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-              //     >
-              //       <Avatar
-              //         className="row-span-2"
-              //         fallback={user.name?.at(0)}
-              //         src={user.image}
-              //         alt="Аватар пользователя"
-              //         isOnline
-              //       />
-              //       <strong className="truncate">{user.name}</strong>
-              //       <span className="truncate text-muted-foreground">
-              //         Онлайн
-              //       </span>
-              //     </Button>
-              //   ))
-              // ) : (
-              //   <p className="py-4 text-center">Ничего не найдено</p>
-              // )
               <>
                 <Button
                   variant="ghost"
@@ -346,6 +170,7 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
             className="pl-9"
             value={searchValue}
             onChange={(event) => setSearchValue(event.target.value)}
+            disabled={createNewConversationApi.isLoading}
           />
           <span className="absolute inset-y-0 ml-3 flex items-center justify-center">
             <BiSearch />
@@ -354,212 +179,34 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
         <div className={"grid gap-2 overflow-auto pb-4"}>
           <ScrollArea className="px-4">
             {!getAllUsersApi.isLoading ? (
-              <>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                >
-                  <Avatar
-                    className="row-span-2"
-                    fallback="D"
-                    alt="Аватар пользователя"
-                    isOnline
-                  />
-                  <strong className="truncate">Danil</strong>
-                  <span className="truncate text-muted-foreground">Онлайн</span>
-                </Button>
-              </>
+              filteredUsers.length > 0 ? (
+                filteredUsers.map((user) => (
+                  <Button
+                    key={user.id}
+                    variant="ghost"
+                    className="grid h-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
+                    disabled={createNewConversationApi.isLoading}
+                    onClick={() =>
+                      createNewConversationApi.mutate({ companionId: user.id })
+                    }
+                  >
+                    <Avatar
+                      className="row-span-2"
+                      fallback={user.name?.at(0)}
+                      src={user.image}
+                      alt="Аватар пользователя"
+                      isOnline
+                    />
+                    <strong className="truncate">{user.name}</strong>
+                    <span className="truncate text-muted-foreground">
+                      Онлайн
+                    </span>
+                  </Button>
+                ))
+              ) : (
+                <p className="py-4 text-center">Ничего не найдено</p>
+              )
             ) : (
-              // filteredUsers.length > 0 ? (
-              //   filteredUsers.map((user) => (
-              //     <Button
-              //       key={user.id}
-              //       variant="ghost"
-              //       className="grid h-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-              //     >
-              //       <Avatar
-              //         className="row-span-2"
-              //         fallback={user.name?.at(0)}
-              //         src={user.image}
-              //         alt="Аватар пользователя"
-              //         isOnline
-              //       />
-              //       <strong className="truncate">{user.name}</strong>
-              //       <span className="truncate text-muted-foreground">Онлайн</span>
-              //     </Button>
-              //   ))
-              // ) : (
-              //   <p className="py-4 text-center">Ничего не найдено</p>
-              // )
               <>
                 <Button
                   variant="ghost"

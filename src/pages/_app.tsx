@@ -1,12 +1,17 @@
+import dayjs from "dayjs";
+import "dayjs/locale/ru";
+import relativeTimePlugin from "dayjs/plugin/relativeTime";
 import { type NextPage } from "next";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppProps } from "next/app";
 import { ThemeProvider } from "~/components/theme-provider";
-
 import { api } from "~/libs/api";
 
 import "~/styles/globals.css";
+
+dayjs.locale("ru");
+dayjs.extend(relativeTimePlugin);
 
 export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: React.ReactElement) => React.ReactNode;

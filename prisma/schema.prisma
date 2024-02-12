@@ -9,6 +9,33 @@ datasource db {
     directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
+model Conversation {
+    id        String    @id @default(cuid())
+    messages  Message[]
+    member    User      @relation("member", fields: [memberId], references: [id])
+    memberId  String
+    creator   User      @relation("creator", fields: [creatorId], references: [id])
+    creatorId String
+    createdAt DateTime  @default(now())
+}
+
+model Message {
+    id String @id @default(cuid())
+
+    images String[]
+    text   String?
+
+    sender   User   @relation("sender", fields: [senderId], references: [id])
+    senderId String
+
+    views User[] @relation("views")
+
+    createdAt DateTime @default(now())
+
+    conversation   Conversation @relation(fields: [conversationId], references: [id])
+    conversationId String
+}
+
 model Account {
     id                String  @id @default(cuid())
     userId            String
@@ -46,6 +73,12 @@ model User {
     password      String?
     accounts      Account[]
     sessions      Session[]
+
+    conversations        Conversation[] @relation("member")
+    createdConversations Conversation[] @relation("creator")
+
+    messages       Message[] @relation("sender")
+    viewedMessages Message[] @relation("views")
 }
 
 model VerificationToken {

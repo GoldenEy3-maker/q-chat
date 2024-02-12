@@ -13,30 +13,43 @@ import GoogleProvider from "next-auth/providers/google";
 import { env } from "~/env";
 import { db } from "~/server/db";
 
-// declare module "next-auth" {
-// interface Session extends DefaultSession {
-//   user: DefaultSession["user"] & {
-//     id: string;
-// ...other properties
-// role: UserRole;
-// };
-// }
+declare module "next-auth" {
+  interface Session extends DefaultSession {
+    user: DefaultSession["user"] & {
+      id: string;
+      email: string | null;
+      name: string | null;
+      image: string | null;
+    };
+  }
 
-// interface User {
-//   // ...other properties
-//   // role: UserRole;
-// }
-// }
+  interface User {
+    id: string;
+    email: string | null;
+    name: string | null;
+    image: string | null;
+  }
+}
 
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    // session: ({ session, user }) => ({
-    //   ...session,
-    //   user: {
-    //     ...session.user,
-    //     id: user.id,
-    //   },
-    // }),
+    async jwt({ user, token }) {
+      return {
+        ...token,
+        ...user,
+      };
+    },
+    session: ({ session, token }) => {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+          email: token.email,
+          name: token.name,
+        },
+      };
+    },
   },
   adapter: PrismaAdapter(db),
   providers: [
@@ -68,7 +81,7 @@ export const authOptions: NextAuthOptions = {
 
         const isPasswordMatch = await bcrypt.compare(
           credentials.password,
-          user.password
+          user.password,
         );
 
         if (!isPasswordMatch) throw new Error("Неверный логин или пароль!");
