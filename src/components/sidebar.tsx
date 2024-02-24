@@ -1,9 +1,12 @@
 import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
 import { BiCheckDouble, BiPlus, BiSearch } from "react-icons/bi";
 import { api } from "~/libs/api";
+import { PagePathMap } from "~/libs/enums";
+import { cn } from "~/libs/utils";
 import { Avatar } from "./avatar";
 import { NavDrawer } from "./navdrawer";
 import { NewChatDialogDrawer } from "./new-chat-dialog-drawer";
@@ -13,28 +16,36 @@ import { ScrollArea } from "./ui/scroll-area";
 import { Skeleton } from "./ui/skeleton";
 
 export const Sidebar: React.FC = () => {
+  const router = useRouter();
   const { data: session } = useSession();
   const [searchValue, setSearchValue] = useState("");
-  const getAllConversationsApi = api.conversation.getAll.useQuery();
+  // const getAllConversationsApi = api.conversation.getAll.useQuery();
 
-  const filteredConversations = useMemo(() => {
-    if (getAllConversationsApi.isLoading || !getAllConversationsApi.data)
-      return [];
+  // const filteredConversations = useMemo(() => {
+  //   if (getAllConversationsApi.isLoading || !getAllConversationsApi.data)
+  //     return [];
 
-    const value = searchValue.toLocaleLowerCase().trim();
+  //   const value = searchValue.toLocaleLowerCase().trim();
 
-    return getAllConversationsApi.data.filter(
-      (conversation) =>
-        conversation.creator.name?.toLocaleLowerCase().trim().includes(value) ||
-        conversation.member.name?.toLocaleLowerCase().trim().includes(value) ||
-        conversation.messages.some((message) =>
-          message.text?.toLocaleLowerCase().trim().includes(value),
-        ),
-    );
-  }, [getAllConversationsApi, searchValue]);
+  //   return getAllConversationsApi.data.filter(
+  //     (conversation) =>
+  //       conversation.creator.name?.toLocaleLowerCase().trim().includes(value) ||
+  //       conversation.member.name?.toLocaleLowerCase().trim().includes(value) ||
+  //       conversation.messages.some((message) =>
+  //         message.text?.toLocaleLowerCase().trim().includes(value),
+  //       ),
+  //   );
+  // }, [getAllConversationsApi, searchValue]);
 
   return (
-    <aside className="grid max-h-dvh grid-rows-[auto_1fr] overflow-hidden border-r md:sticky md:left-0 md:top-0">
+    <aside
+      className={cn(
+        "grid max-h-dvh grid-rows-[auto_1fr] overflow-hidden border-r md:sticky md:left-0 md:top-0",
+        {
+          "hidden md:grid": router.asPath.includes(PagePathMap.Chat),
+        },
+      )}
+    >
       <header className="mb-1 mt-4 grid grid-cols-[auto_1fr] gap-2 px-4 md:grid-cols-[1fr]">
         <NavDrawer />
         <div className="relative">
@@ -50,7 +61,7 @@ export const Sidebar: React.FC = () => {
         </div>
       </header>
       <ScrollArea className="relative px-4 py-3">
-        {!getAllConversationsApi.isLoading ? (
+        {/* {!getAllConversationsApi.isLoading ? (
           filteredConversations.length > 0 ? (
             filteredConversations.map((conversation) => {
               const member =
@@ -102,58 +113,58 @@ export const Sidebar: React.FC = () => {
           ) : (
             <p className="py-4 text-center">Ничего не найдено</p>
           )
-        ) : (
-          <>
-            <Button
-              className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
-              variant="ghost"
-            >
-              <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
-              <Skeleton className="col-start-2 row-start-1 h-2 w-[10rem]" />
-              <Skeleton className="col-start-2 row-start-2 h-2 w-[7rem]" />
-            </Button>
-            <Button
-              className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
-              variant="ghost"
-            >
-              <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
-              <Skeleton className="col-start-2 row-start-1 h-2 w-[10rem]" />
-              <Skeleton className="col-start-2 row-start-2 h-2 w-[7rem]" />
-            </Button>
-            <Button
-              className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
-              variant="ghost"
-            >
-              <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
-              <Skeleton className="col-start-2 row-start-1 h-2 w-[10rem]" />
-              <Skeleton className="col-start-2 row-start-2 h-2 w-[7rem]" />
-            </Button>
-            <Button
-              className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
-              variant="ghost"
-            >
-              <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
-              <Skeleton className="col-start-2 row-start-1 h-2 w-[10rem]" />
-              <Skeleton className="col-start-2 row-start-2 h-2 w-[7rem]" />
-            </Button>
-            <Button
-              className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
-              variant="ghost"
-            >
-              <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
-              <Skeleton className="col-start-2 row-start-1 h-2 w-[10rem]" />
-              <Skeleton className="col-start-2 row-start-2 h-2 w-[7rem]" />
-            </Button>
-            <Button
-              className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
-              variant="ghost"
-            >
-              <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
-              <Skeleton className="col-start-2 row-start-1 h-2 w-[10rem]" />
-              <Skeleton className="col-start-2 row-start-2 h-2 w-[7rem]" />
-            </Button>
-          </>
-        )}
+        ) : ( */}
+        <>
+          <Button
+            className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
+            variant="ghost"
+          >
+            <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
+            <Skeleton className="col-start-2 row-start-1 h-2 w-[10rem]" />
+            <Skeleton className="col-start-2 row-start-2 h-2 w-[7rem]" />
+          </Button>
+          <Button
+            className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
+            variant="ghost"
+          >
+            <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
+            <Skeleton className="col-start-2 row-start-1 h-2 w-[10rem]" />
+            <Skeleton className="col-start-2 row-start-2 h-2 w-[7rem]" />
+          </Button>
+          <Button
+            className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
+            variant="ghost"
+          >
+            <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
+            <Skeleton className="col-start-2 row-start-1 h-2 w-[10rem]" />
+            <Skeleton className="col-start-2 row-start-2 h-2 w-[7rem]" />
+          </Button>
+          <Button
+            className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
+            variant="ghost"
+          >
+            <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
+            <Skeleton className="col-start-2 row-start-1 h-2 w-[10rem]" />
+            <Skeleton className="col-start-2 row-start-2 h-2 w-[7rem]" />
+          </Button>
+          <Button
+            className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
+            variant="ghost"
+          >
+            <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
+            <Skeleton className="col-start-2 row-start-1 h-2 w-[10rem]" />
+            <Skeleton className="col-start-2 row-start-2 h-2 w-[7rem]" />
+          </Button>
+          <Button
+            className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
+            variant="ghost"
+          >
+            <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
+            <Skeleton className="col-start-2 row-start-1 h-2 w-[10rem]" />
+            <Skeleton className="col-start-2 row-start-2 h-2 w-[7rem]" />
+          </Button>
+        </>
+        {/* )} */}
         <NewChatDialogDrawer>
           <Button
             className="absolute bottom-8 right-8 z-10 h-12 w-12 rounded-full md:h-10 md:w-10"

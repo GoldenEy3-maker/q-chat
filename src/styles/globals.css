@@ -59,7 +59,7 @@
 
   .container-grid {
     --padding-inline: 1rem;
-    --container-max-widht: 150ch;
+    --container-max-widht: 140ch;
     --breakout-max-width: 160ch;
 
     --breakout-size: calc(
@@ -94,5 +94,17 @@
 
     display: grid;
     grid-template-columns: inherit;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
 }

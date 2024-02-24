@@ -1,8 +1,10 @@
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { BiSearch } from "react-icons/bi";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
 import { api } from "~/libs/api";
+import { PagePathMap } from "~/libs/enums";
 import { Avatar } from "./avatar";
 import { Button } from "./ui/button";
 import {
@@ -37,22 +39,6 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
     enabled: isOpen,
   });
 
-  const getAllConversationsApi = api.conversation.getAll.useQuery(undefined, {
-    enabled: isOpen,
-  });
-
-  const createNewConversationApi = api.conversation.create.useMutation({
-    onSuccess() {
-      toast.success("Новый диалог успешно создан!");
-      setIsOpen(false);
-      void getAllConversationsApi.refetch();
-    },
-    onError(error) {
-      console.error(error);
-      toast.error(error.message);
-    },
-  });
-
   const filteredUsers = useMemo(() => {
     if (getAllUsersApi.isLoading || !getAllUsersApi.data) return [];
 
@@ -82,7 +68,6 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
               className="pl-9"
               value={searchValue}
               onChange={(event) => setSearchValue(event.target.value)}
-              disabled={createNewConversationApi.isLoading}
             />
             <span className="absolute inset-y-0 ml-3 flex items-center justify-center">
               <BiSearch />
@@ -96,22 +81,22 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
                     key={user.id}
                     variant="ghost"
                     className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                    disabled={createNewConversationApi.isLoading}
-                    onClick={() =>
-                      createNewConversationApi.mutate({ companionId: user.id })
-                    }
+                    asChild
+                    onClick={() => setIsOpen(false)}
                   >
-                    <Avatar
-                      className="row-span-2"
-                      fallback={user.name?.at(0)}
-                      src={user.image}
-                      alt="Аватар пользователя"
-                      isOnline
-                    />
-                    <strong className="truncate">{user.name}</strong>
-                    <span className="truncate text-muted-foreground">
-                      Онлайн
-                    </span>
+                    <Link href={PagePathMap.Chat + user.id}>
+                      <Avatar
+                        className="row-span-2"
+                        fallback={user.name?.at(0)}
+                        src={user.image}
+                        alt="Аватар пользователя"
+                        isOnline
+                      />
+                      <strong className="truncate">{user.name}</strong>
+                      <span className="truncate text-muted-foreground">
+                        Онлайн
+                      </span>
+                    </Link>
                   </Button>
                 ))
               ) : (
@@ -170,7 +155,6 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
             className="pl-9"
             value={searchValue}
             onChange={(event) => setSearchValue(event.target.value)}
-            disabled={createNewConversationApi.isLoading}
           />
           <span className="absolute inset-y-0 ml-3 flex items-center justify-center">
             <BiSearch />
@@ -185,22 +169,22 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
                     key={user.id}
                     variant="ghost"
                     className="grid h-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                    disabled={createNewConversationApi.isLoading}
-                    onClick={() =>
-                      createNewConversationApi.mutate({ companionId: user.id })
-                    }
+                    asChild
+                    onClick={() => setIsOpen(false)}
                   >
-                    <Avatar
-                      className="row-span-2"
-                      fallback={user.name?.at(0)}
-                      src={user.image}
-                      alt="Аватар пользователя"
-                      isOnline
-                    />
-                    <strong className="truncate">{user.name}</strong>
-                    <span className="truncate text-muted-foreground">
-                      Онлайн
-                    </span>
+                    <Link href={PagePathMap.Chat + user.id}>
+                      <Avatar
+                        className="row-span-2"
+                        fallback={user.name?.at(0)}
+                        src={user.image}
+                        alt="Аватар пользователя"
+                        isOnline
+                      />
+                      <strong className="truncate">{user.name}</strong>
+                      <span className="truncate text-muted-foreground">
+                        Онлайн
+                      </span>
+                    </Link>
                   </Button>
                 ))
               ) : (

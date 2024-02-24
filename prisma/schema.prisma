@@ -9,14 +9,22 @@ datasource db {
     directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-model Conversation {
-    id        String    @id @default(cuid())
-    messages  Message[]
-    member    User      @relation("member", fields: [memberId], references: [id])
-    memberId  String
-    creator   User      @relation("creator", fields: [creatorId], references: [id])
-    creatorId String
-    createdAt DateTime  @default(now())
+model Channel {
+    id String @id @default(cuid())
+
+    members  User[]
+    messages Message[]
+
+    createdAt DateTime @default(now())
+}
+
+model Group {
+    id String @id @default(cuid())
+
+    members  User[]
+    messages Message[]
+
+    createdAt DateTime @default(now())
 }
 
 model Message {
@@ -25,15 +33,22 @@ model Message {
     images String[]
     text   String?
 
+    isEdited Boolean @default(false)
+
     sender   User   @relation("sender", fields: [senderId], references: [id])
     senderId String
+
+    recipient   User?   @relation("recipient", fields: [recipientId], references: [id])
+    recipientId String?
+
+    isRecipientReaded Boolean?
 
     views User[] @relation("views")
 
     createdAt DateTime @default(now())
 
-    conversation   Conversation @relation(fields: [conversationId], references: [id])
-    conversationId String
+    groups   Group[]
+    channels Channel[]
 }
 
 model Account {
@@ -69,16 +84,18 @@ model User {
     username      String?   @unique
     email         String?   @unique
     emailVerified DateTime?
+    lastOnlineAt  DateTime  @default(now())
     image         String?
     password      String?
     accounts      Account[]
     sessions      Session[]
 
-    conversations        Conversation[] @relation("member")
-    createdConversations Conversation[] @relation("creator")
+    sendedMessages  Message[] @relation("sender")
+    recivedMessages Message[] @relation("recipient")
+    viewedMessages  Message[] @relation("views")
 
-    messages       Message[] @relation("sender")
-    viewedMessages Message[] @relation("views")
+    channels Channel[]
+    groups   Group[]
 }
 
 model VerificationToken {

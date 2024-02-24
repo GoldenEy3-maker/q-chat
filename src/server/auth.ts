@@ -20,6 +20,8 @@ declare module "next-auth" {
       email: string | null;
       name: string | null;
       image: string | null;
+      username: string | null;
+      lastOnlineAt: Date;
     };
   }
 
@@ -28,6 +30,8 @@ declare module "next-auth" {
     email: string | null;
     name: string | null;
     image: string | null;
+    username: string | null;
+    lastOnlineAt: Date;
   }
 }
 
@@ -47,6 +51,8 @@ export const authOptions: NextAuthOptions = {
           id: token.id,
           email: token.email,
           name: token.name,
+          username: token.username,
+          lastOnlineAt: token.lastOnlineAt,
         },
       };
     },

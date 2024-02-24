@@ -5,24 +5,53 @@ import { cn } from "~/libs/utils";
 
 const ScrollArea = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>
->(({ className, children, ...props }, ref) => (
-  <ScrollAreaPrimitive.Root
-    ref={ref}
-    className={cn("relative overflow-hidden", className)}
-    {...props}
-  >
-    <ScrollAreaPrimitive.Viewport
+  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> & {
+    fullWidthContainer?: boolean;
+    isScrollLock?: boolean;
+  }
+>(
+  (
+    { className, children, fullWidthContainer, isScrollLock, ...props },
+    ref,
+  ) => (
+    <ScrollAreaPrimitive.Root
+      className={cn(
+        "relative overflow-hidden",
+        {
+          "full-width": !!fullWidthContainer,
+        },
+        className,
+      )}
+      {...props}
+    >
+      <ScrollAreaPrimitive.Viewport
+        asChild
+        className={cn(
+          "!flex h-full w-full flex-col gap-y-2 rounded-[inherit]",
+          {
+            "!overflow-hidden": isScrollLock,
+          },
+        )}
+        ref={ref}
+      >
+        {children}
+      </ScrollAreaPrimitive.Viewport>
+      {/* <ScrollAreaPrimitive.Viewport
       className={cn(
         "grid h-full w-full grid-rows-[1fr] rounded-[inherit] [&_>_div]:!flex [&_>_div]:flex-col [&_>_div]:gap-y-2",
       )}
     >
       {children}
-    </ScrollAreaPrimitive.Viewport>
-    <ScrollBar />
-    <ScrollAreaPrimitive.Corner />
-  </ScrollAreaPrimitive.Root>
-));
+    </ScrollAreaPrimitive.Viewport> */}
+      <ScrollBar
+        className={cn({
+          "full-width": !!fullWidthContainer,
+        })}
+      />
+      <ScrollAreaPrimitive.Corner />
+    </ScrollAreaPrimitive.Root>
+  ),
+);
 ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName;
 
 const ScrollBar = React.forwardRef<

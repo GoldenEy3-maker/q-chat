@@ -1,3 +1,5 @@
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
@@ -12,4 +14,21 @@ export const userRouter = createTRPCRouter({
 
     return users;
   }),
+  getById: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async (opts) => {
+      const user = await opts.ctx.db.user.findUnique({
+        where: {
+          id: opts.input.id,
+        },
+      });
+
+      if (!user)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Такого пользователя не существует!",
+        });
+
+      return user;
+    }),
 });
