@@ -8,7 +8,7 @@ import React, {
   useImperativeHandle,
   useRef,
 } from "react";
-import { BiMessageSquareX } from "react-icons/bi";
+import { BiCheck, BiMessageSquareX } from "react-icons/bi";
 import { cn } from "~/libs/utils";
 import { Avatar } from "./avatar";
 import { ScrollArea } from "./ui/scroll-area";
@@ -55,10 +55,10 @@ const useAutoScrollToBottom = (
   }, [isLoading, ref, router]);
 };
 
-export const MessagesList = forwardRef<HTMLParagraphElement, MessagesListProps>(
+export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
   ({ messages, isLoading }, ref) => {
     const { data: sesssion } = useSession();
-    const lastListElRef = useRef<HTMLParagraphElement>(null);
+    const lastListElRef = useRef<HTMLDivElement>(null);
 
     const groupMessages = () => {
       const firstMsg = messages[0];
@@ -123,14 +123,14 @@ export const MessagesList = forwardRef<HTMLParagraphElement, MessagesListProps>(
                       "justify-end": isMyMessage,
                     })}
                   >
-                    <Avatar
+                    {/* <Avatar
                       src={messages[0]?.sender.image}
                       alt="Аватар пользователя"
                       fallback={messages[0]?.sender.name?.at(0)}
                       className={cn("sticky bottom-0 left-0 flex-shrink-0", {
                         "order-2": isMyMessage,
                       })}
-                    />
+                    /> */}
                     <div
                       className={cn(
                         "flex flex-col gap-[0.1rem] overflow-hidden",
@@ -140,28 +140,28 @@ export const MessagesList = forwardRef<HTMLParagraphElement, MessagesListProps>(
                       )}
                     >
                       {messages.map((m) => (
-                        <p
+                        <div
                           key={m.id}
                           ref={lastListElRef}
                           className={cn(
-                            "w-max whitespace-pre-wrap rounded-lg bg-secondary p-2 [overflow-wrap:break-word]",
+                            "flex w-max items-end gap-2 rounded-lg bg-secondary p-2",
                             {
                               "bg-primary text-background": isMyMessage,
                             },
                           )}
                         >
-                          {isMyMessage ? (
-                            <>
-                              {m.text}{" "}
-                              <sub>{dayjs(m.createdAt).format("HH:mm")}</sub>
-                            </>
-                          ) : (
-                            <>
-                              <sub>{dayjs(m.createdAt).format("HH:mm")}</sub>{" "}
-                              {m.text}
-                            </>
-                          )}
-                        </p>
+                          <p
+                            className={cn(
+                              "whitespace-pre-wrap [overflow-wrap:break-word]",
+                            )}
+                          >
+                            {m.text}
+                          </p>
+                          <span className="text-xs">
+                            {dayjs(m.createdAt).format("HH:mm")}
+                          </span>
+                          {isMyMessage ? <BiCheck className="text-xl" /> : null}
+                        </div>
                       ))}
                     </div>
                   </div>

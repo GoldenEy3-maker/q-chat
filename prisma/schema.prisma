@@ -47,8 +47,11 @@ model Message {
 
     createdAt DateTime @default(now())
 
-    groups   Group[]
-    channels Channel[]
+    group   Group?  @relation(fields: [groupId], references: [id])
+    groupId String?
+
+    channel   Channel? @relation(fields: [channelId], references: [id])
+    channelId String?
 }
 
 model Account {

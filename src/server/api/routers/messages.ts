@@ -69,4 +69,80 @@ export const messagesRouter = createTRPCRouter({
 
       return newMessage;
     }),
+
+  getAllConversations: protectedProcedure.query(async (opts) => {
+    const users = await opts.ctx.db.user.findMany({
+      where: {
+        AND: [
+          {
+            id: {
+              not: opts.ctx.session.user.id,
+            },
+          },
+          {
+            OR: [
+              {
+                recivedMessages: {
+                  some: {
+                    OR: [
+                      {
+                        recipientId: opts.ctx.session.user.id,
+                      },
+                      {
+                        senderId: opts.ctx.session.user.id,
+                      },
+                    ],
+                  },
+                },
+              },
+              {
+                sendedMessages: {
+                  some: {
+                    OR: [
+                      {
+                        recipientId: opts.ctx.session.user.id,
+                      },
+                      {
+                        senderId: opts.ctx.session.user.id,
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      },
+      include: {
+        sendedMessages: {
+          where: {
+            OR: [
+              {
+                senderId: opts.ctx.session.user.id,
+              },
+              {
+                recipientId: opts.ctx.session.user.id,
+              },
+            ],
+          },
+          // take: -1,
+        },
+        recivedMessages: {
+          where: {
+            OR: [
+              {
+                senderId: opts.ctx.session.user.id,
+              },
+              {
+                recipientId: opts.ctx.session.user.id,
+              },
+            ],
+          },
+          // take: -1,
+        },
+      },
+    });
+
+    return users;
+  }),
 });

@@ -22,7 +22,7 @@ type MessageInputProps = {
         };
       }>
     | undefined;
-  lastListElRef: React.RefObject<HTMLParagraphElement>;
+  lastListElRef: React.RefObject<HTMLDivElement>;
 };
 
 export const MessageInput: React.FC<MessageInputProps> = ({

@@ -19,7 +19,7 @@ import { api } from "~/libs/api";
 import { type NextPageWithLayout } from "../_app";
 
 const ChatPage: NextPageWithLayout = () => {
-  const lastListElRef = useRef<HTMLParagraphElement>(null);
+  const lastListElRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   const getUserByIdApi = api.user.getById.useQuery({
