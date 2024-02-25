@@ -1,6 +1,7 @@
 import { type Prisma } from "@prisma/client";
 import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import React, {
   forwardRef,
   useEffect,
@@ -45,11 +46,13 @@ const useAutoScrollToBottom = (
   ref: React.RefObject<HTMLDivElement>,
   isLoading: boolean,
 ) => {
+  const router = useRouter();
+
   useEffect(() => {
-    if (ref.current && !isLoading) {
+    if (ref.current) {
       ref.current.scrollIntoView();
     }
-  }, [isLoading, ref]);
+  }, [isLoading, ref, router]);
 };
 
 export const MessagesList = forwardRef<HTMLParagraphElement, MessagesListProps>(
@@ -68,8 +71,7 @@ export const MessagesList = forwardRef<HTMLParagraphElement, MessagesListProps>(
           const lastMsg = lastMessages.at(-1);
 
           if (
-            (lastMsg?.senderId === m.senderId ||
-              lastMsg?.recipientId === m.recipientId) &&
+            lastMsg?.senderId === m.senderId &&
             dayjs(m.createdAt).diff(lastMsg?.createdAt, "minute") < 5
           ) {
             lastMessages?.push(m);
@@ -122,25 +124,20 @@ export const MessagesList = forwardRef<HTMLParagraphElement, MessagesListProps>(
                     })}
                   >
                     <Avatar
-                      src={
-                        isMyMessage
-                          ? messages[0]?.sender.image
-                          : messages[0]?.recipient?.image
-                      }
+                      src={messages[0]?.sender.image}
                       alt="Аватар пользователя"
-                      fallback={
-                        isMyMessage
-                          ? messages[0]?.sender.name?.at(0)
-                          : messages[0]?.recipient?.name?.at(0)
-                      }
+                      fallback={messages[0]?.sender.name?.at(0)}
                       className={cn("sticky bottom-0 left-0 flex-shrink-0", {
                         "order-2": isMyMessage,
                       })}
                     />
                     <div
-                      className={cn("flex flex-col gap-1 overflow-hidden", {
-                        "items-end": isMyMessage,
-                      })}
+                      className={cn(
+                        "flex flex-col gap-[0.1rem] overflow-hidden",
+                        {
+                          "items-end": isMyMessage,
+                        },
+                      )}
                     >
                       {messages.map((m) => (
                         <p
