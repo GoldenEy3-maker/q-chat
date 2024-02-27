@@ -80,7 +80,7 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
                   <Button
                     key={user.id}
                     variant="ghost"
-                    className="grid h-max w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
+                    className="grid h-max w-full flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
                     asChild
                     onClick={() => setIsOpen(false)}
                   >
@@ -106,7 +106,7 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
               <>
                 <Button
                   variant="ghost"
-                  className="grid h-14 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
+                  className="grid h-14 flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
                 >
                   <Skeleton className="row-span-2 h-10 w-10 rounded-full" />
                   <Skeleton className="h-2 w-[10rem]" />
@@ -114,7 +114,7 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
                 </Button>
                 <Button
                   variant="ghost"
-                  className="grid h-14 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
+                  className="grid h-14 flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
                 >
                   <Skeleton className="row-span-2 h-10 w-10 rounded-full" />
                   <Skeleton className="h-2 w-[10rem]" />
@@ -122,7 +122,7 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
                 </Button>
                 <Button
                   variant="ghost"
-                  className="grid h-14 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
+                  className="grid h-14 flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
                 >
                   <Skeleton className="row-span-2 h-10 w-10 rounded-full" />
                   <Skeleton className="h-2 w-[10rem]" />
@@ -168,7 +168,7 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
                   <Button
                     key={user.id}
                     variant="ghost"
-                    className="grid h-full grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
+                    className="grid h-full flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
                     asChild
                     onClick={() => setIsOpen(false)}
                   >
@@ -194,7 +194,7 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
               <>
                 <Button
                   variant="ghost"
-                  className="grid h-14 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
+                  className="grid h-14 flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
                 >
                   <Skeleton className="row-span-2 h-10 w-10 rounded-full" />
                   <Skeleton className="h-2 w-[10rem]" />
@@ -202,7 +202,7 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
                 </Button>
                 <Button
                   variant="ghost"
-                  className="grid h-14 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
+                  className="grid h-14 flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
                 >
                   <Skeleton className="row-span-2 h-10 w-10 rounded-full" />
                   <Skeleton className="h-2 w-[10rem]" />
@@ -210,7 +210,7 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
                 </Button>
                 <Button
                   variant="ghost"
-                  className="grid h-14 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
+                  className="grid h-14 flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
                 >
                   <Skeleton className="row-span-2 h-10 w-10 rounded-full" />
                   <Skeleton className="h-2 w-[10rem]" />

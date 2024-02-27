@@ -1,11 +1,11 @@
-import { type Prisma } from "@prisma/client";
-import { useSession } from "next-auth/react";
-import React, { useRef, useState } from "react";
-import { BiPaperclip, BiSolidSend } from "react-icons/bi";
-import { toast } from "sonner";
-import { api } from "~/libs/api";
-import { Button } from "./ui/button";
-import { Textarea } from "./ui/textarea";
+import { type Prisma } from "@prisma/client"
+import { useSession } from "next-auth/react"
+import React, { useRef, useState } from "react"
+import { BiPaperclip, BiSolidSend } from "react-icons/bi"
+import { toast } from "sonner"
+import { api } from "~/libs/api"
+import { Button } from "./ui/button"
+import { Textarea } from "./ui/textarea"
 
 type MessageInputProps = {
   recipient:
@@ -57,8 +57,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
             senderId: session.user.id,
             sender: session.user,
             recipient: recipient,
-            channelId: "",
-            groupId: "",
+            channelId: null,
+            groupId: null,
           },
         ];
       });

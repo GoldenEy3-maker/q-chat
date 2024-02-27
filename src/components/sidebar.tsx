@@ -79,7 +79,7 @@ export const Sidebar: React.FC = () => {
           </span>
         </div>
       </header>
-      <ScrollArea className="relative px-4 py-3">
+      <ScrollArea className="px-4 py-3">
         {!getAllConversationsApi.isLoading ? (
           filteredConversations.length > 0 ? (
             filteredConversations
@@ -99,7 +99,7 @@ export const Sidebar: React.FC = () => {
                   <Button
                     key={conversation.id}
                     asChild
-                    className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
+                    className="grid h-auto flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
                     variant="ghost"
                   >
                     <Link href={PagePathMap.Chat + conversation.id}>
@@ -134,7 +134,7 @@ export const Sidebar: React.FC = () => {
         ) : (
           <>
             <Button
-              className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
+              className="grid h-auto flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
               variant="ghost"
             >
               <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
@@ -142,7 +142,7 @@ export const Sidebar: React.FC = () => {
               <Skeleton className="col-start-2 row-start-2 h-2 w-[7rem]" />
             </Button>
             <Button
-              className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
+              className="grid h-auto flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
               variant="ghost"
             >
               <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
@@ -150,7 +150,7 @@ export const Sidebar: React.FC = () => {
               <Skeleton className="col-start-2 row-start-2 h-2 w-[7rem]" />
             </Button>
             <Button
-              className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
+              className="grid h-auto flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
               variant="ghost"
             >
               <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
@@ -158,7 +158,7 @@ export const Sidebar: React.FC = () => {
               <Skeleton className="col-start-2 row-start-2 h-2 w-[7rem]" />
             </Button>
             <Button
-              className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
+              className="grid h-auto flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
               variant="ghost"
             >
               <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
@@ -166,7 +166,7 @@ export const Sidebar: React.FC = () => {
               <Skeleton className="col-start-2 row-start-2 h-2 w-[7rem]" />
             </Button>
             <Button
-              className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
+              className="grid h-auto flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
               variant="ghost"
             >
               <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
@@ -174,7 +174,7 @@ export const Sidebar: React.FC = () => {
               <Skeleton className="col-start-2 row-start-2 h-2 w-[7rem]" />
             </Button>
             <Button
-              className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
+              className="grid h-auto flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2"
               variant="ghost"
             >
               <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
