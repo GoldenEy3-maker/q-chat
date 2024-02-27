@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { type Prisma } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import React, { useRef, useState } from "react";
@@ -43,22 +41,27 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       await utils.messages.getByRecipientId.cancel();
       const prevData = utils.messages.getByRecipientId.getData();
 
-      utils.messages.getByRecipientId.setData({ id: recipient.id }, (old) => [
-        // @ts-ignore
-        ...old,
-        {
-          id: crypto.randomUUID(),
-          createdAt: new Date(),
-          images: newMessage.images,
-          text: newMessage.text,
-          isEdited: false,
-          isRecipientReaded: false,
-          recipientId: recipient.id,
-          senderId: session.user.id,
-          sender: session.user,
-          recipient: recipient,
-        },
-      ]);
+      utils.messages.getByRecipientId.setData({ id: recipient.id }, (old) => {
+        if (!old) return;
+
+        return [
+          ...old,
+          {
+            id: crypto.randomUUID(),
+            createdAt: new Date(),
+            images: newMessage.images,
+            text: newMessage.text!,
+            isEdited: false,
+            isRecipientReaded: false,
+            recipientId: recipient.id,
+            senderId: session.user.id,
+            sender: session.user,
+            recipient: recipient,
+            channelId: "",
+            groupId: "",
+          },
+        ];
+      });
 
       setTimeout(() => {
         lastListElRef.current?.scrollIntoView({
@@ -84,7 +87,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const submitHandler: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
-    if (!recipient?.id) return;
+    if (!recipient?.id || !textAreaValue) return;
 
     sendToRecipientApi.mutate({
       id: recipient.id,
