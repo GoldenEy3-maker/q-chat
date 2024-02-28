@@ -17,8 +17,8 @@ import { ScrollArea } from "./ui/scroll-area";
 import { Skeleton } from "./ui/skeleton";
 
 export const Sidebar: React.FC = () => {
-  const router = useRouter();
   const { data: session } = useSession();
+  const router = useRouter();
   const [searchValue, setSearchValue] = useState("");
 
   const getAllConversationsApi = api.messages.getAllConversations.useQuery();
@@ -94,6 +94,8 @@ export const Sidebar: React.FC = () => {
               })
               .map((conversation) => {
                 const lastMessage = getLastMessage(conversation)!;
+                const isMyLastMessage =
+                  lastMessage.senderId === session?.user.id;
 
                 return (
                   <Button
@@ -113,7 +115,9 @@ export const Sidebar: React.FC = () => {
                         <strong className="flex-grow truncate">
                           {conversation?.name}
                         </strong>
-                        <BiCheckDouble className="text-xl text-primary" />
+                        {isMyLastMessage ? (
+                          <BiCheckDouble className="text-xl text-primary" />
+                        ) : null}
                         <time
                           className="opacity-50"
                           dateTime={lastMessage?.createdAt.toISOString()}

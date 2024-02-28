@@ -27,7 +27,7 @@ const ScrollArea = React.forwardRef<
       <ScrollAreaPrimitive.Viewport
         asChild
         className={cn(
-          "!flex h-full w-full flex-col gap-y-2 rounded-[inherit]",
+          "!flex h-full w-full flex-col gap-y-1 rounded-[inherit]",
           {
             "!overflow-hidden": isScrollLock,
           },

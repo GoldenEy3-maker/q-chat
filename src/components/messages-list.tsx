@@ -1,4 +1,3 @@
-import { type Prisma } from "@prisma/client";
 import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -9,36 +8,13 @@ import React, {
   useRef,
 } from "react";
 import { BiCheck, BiMessageSquareX } from "react-icons/bi";
+import { type RouterOutputs } from "~/libs/api";
 import { cn } from "~/libs/utils";
-import { Avatar } from "./avatar";
 import { ScrollArea } from "./ui/scroll-area";
 import { Skeleton } from "./ui/skeleton";
 
 type MessagesListProps = {
-  messages: Prisma.MessageGetPayload<{
-    include: {
-      sender: {
-        select: {
-          email: true;
-          id: true;
-          image: true;
-          name: true;
-          lastOnlineAt: true;
-          username: true;
-        };
-      };
-      recipient: {
-        select: {
-          email: true;
-          id: true;
-          image: true;
-          name: true;
-          lastOnlineAt: true;
-          username: true;
-        };
-      };
-    };
-  }>[];
+  messages: RouterOutputs["messages"]["getByRecipientId"];
   isLoading: boolean;
 };
 
@@ -142,9 +118,8 @@ export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
                       {messages.map((m) => (
                         <div
                           key={m.id}
-                          ref={lastListElRef}
                           className={cn(
-                            "flex w-max items-end gap-2 rounded-lg bg-secondary p-2",
+                            "flex max-w-[85%] flex-wrap items-end gap-x-2 rounded-lg bg-secondary p-2",
                             {
                               "bg-primary text-background": isMyMessage,
                             },
@@ -152,25 +127,30 @@ export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
                         >
                           <p
                             className={cn(
-                              "whitespace-pre-wrap [overflow-wrap:break-word]",
+                              "whitespace-pre-wrap [overflow-wrap:anywhere]",
                             )}
                           >
                             {m.text}
                           </p>
-                          <span className="text-xs">
-                            {dayjs(m.createdAt).format("HH:mm")}
-                          </span>
-                          {isMyMessage ? <BiCheck className="text-xl" /> : null}
+                          <div className="flex flex-1 items-center justify-end gap-2">
+                            <span className="text-xs">
+                              {dayjs(m.createdAt).format("HH:mm")}
+                            </span>
+                            {isMyMessage ? (
+                              <BiCheck className="flex-shrink-0 text-xl" />
+                            ) : null}
+                          </div>
                         </div>
                       ))}
+                      <div ref={lastListElRef} />
                     </div>
                   </div>
                 );
               })
             ) : (
               <div className="m-auto flex flex-col items-center justify-center">
-                <BiMessageSquareX className="mb-2 text-7xl" />
-                <p className="text-center text-xl">
+                <BiMessageSquareX className="mb-2 text-6xl" />
+                <p className="text-center">
                   У вас пока нет сообщений с этим пользователем!
                 </p>
               </div>

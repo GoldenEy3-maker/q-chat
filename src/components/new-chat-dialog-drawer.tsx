@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { BiSearch } from "react-icons/bi";
-import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
 import { api } from "~/libs/api";
 import { PagePathMap } from "~/libs/enums";

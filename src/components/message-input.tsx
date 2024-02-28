@@ -1,25 +1,13 @@
-import { type Prisma } from "@prisma/client"
-import { useSession } from "next-auth/react"
-import React, { useRef, useState } from "react"
-import { BiPaperclip, BiSolidSend } from "react-icons/bi"
-import { toast } from "sonner"
-import { api } from "~/libs/api"
-import { Button } from "./ui/button"
-import { Textarea } from "./ui/textarea"
+import { useSession } from "next-auth/react";
+import React, { useRef, useState } from "react";
+import { BiPaperclip, BiSolidSend } from "react-icons/bi";
+import { toast } from "sonner";
+import { api, type RouterOutputs } from "~/libs/api";
+import { Button } from "./ui/button";
+import { Textarea } from "./ui/textarea";
 
 type MessageInputProps = {
-  recipient:
-    | Prisma.UserGetPayload<{
-        select: {
-          email: true;
-          id: true;
-          image: true;
-          name: true;
-          lastOnlineAt: true;
-          username: true;
-        };
-      }>
-    | undefined;
+  recipient: RouterOutputs["user"]["getById"] | undefined;
   lastListElRef: React.RefObject<HTMLDivElement>;
 };
 
@@ -29,6 +17,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 }) => {
   const { data: session } = useSession();
   const [textAreaValue, setTextAreaValue] = useState("");
+
+  const formRef = useRef<HTMLFormElement>(null);
 
   const utils = api.useUtils();
 
@@ -84,9 +74,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     },
   });
 
-  const submitHandler: React.FormEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault();
-
+  const mutateHandler = () => {
     if (!recipient?.id || !textAreaValue) return;
 
     sendToRecipientApi.mutate({
@@ -96,10 +84,16 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     });
   };
 
+  const submitHandler: React.FormEventHandler<HTMLFormElement> = (event) => {
+    event.preventDefault();
+    mutateHandler();
+  };
+
   return (
     <form
       className="full-width sticky bottom-0 border-t bg-background"
       onSubmit={submitHandler}
+      ref={formRef}
       encType="multipart/form-data"
     >
       <div className="grid grid-cols-[auto_1fr_auto] items-end gap-2 py-2">
@@ -126,6 +120,12 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           placeholder="Написать сообщение..."
           ref={textAreaRef}
           value={textAreaValue}
+          onKeyDown={(event) => {
+            if (event.code === "Enter" && !event.shiftKey) {
+              event.preventDefault();
+              mutateHandler();
+            }
+          }}
           onChange={(event) => {
             setTextAreaValue(event.target.value);
 
