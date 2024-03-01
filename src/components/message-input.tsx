@@ -49,6 +49,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
             recipient: recipient,
             channelId: null,
             groupId: null,
+            views: [],
           },
         ];
       });

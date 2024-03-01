@@ -7,9 +7,10 @@ import React, {
   useImperativeHandle,
   useRef,
 } from "react";
-import { BiCheck, BiMessageSquareX } from "react-icons/bi";
+import { BiMessageSquareX } from "react-icons/bi";
 import { type RouterOutputs } from "~/libs/api";
 import { cn } from "~/libs/utils";
+import { MessageBox } from "./message-box";
 import { ScrollArea } from "./ui/scroll-area";
 import { Skeleton } from "./ui/skeleton";
 
@@ -33,7 +34,7 @@ const useAutoScrollToBottom = (
 
 export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
   ({ messages, isLoading }, ref) => {
-    const { data: sesssion } = useSession();
+    const { data: session } = useSession();
     const lastListElRef = useRef<HTMLDivElement>(null);
 
     const groupMessages = () => {
@@ -90,13 +91,14 @@ export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
           {!isLoading ? (
             messages.length > 0 ? (
               Object.entries(groupMessages()).map(([key, messages]) => {
-                const isMyMessage = sesssion?.user.id === messages[0]?.senderId;
+                const isMyMessage = session?.user.id === messages[0]?.senderId;
 
                 return (
                   <div
                     key={key}
-                    className={cn("flex items-end gap-2", {
-                      "justify-end": isMyMessage,
+                    className={cn("flex flex-col items-start gap-[0.1rem]", {
+                      // "justify-end": isMyMessage,
+                      "items-end": isMyMessage,
                     })}
                   >
                     {/* <Avatar
@@ -107,43 +109,27 @@ export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
                         "order-2": isMyMessage,
                       })}
                     /> */}
-                    <div
+                    {/* <div
                       className={cn(
                         "flex flex-col gap-[0.1rem] overflow-hidden",
                         {
                           "items-end": isMyMessage,
                         },
                       )}
-                    >
-                      {messages.map((m) => (
-                        <div
-                          key={m.id}
-                          className={cn(
-                            "flex max-w-[85%] flex-wrap items-end gap-x-2 rounded-lg bg-secondary p-2",
-                            {
-                              "bg-primary text-background": isMyMessage,
-                            },
-                          )}
-                        >
-                          <p
-                            className={cn(
-                              "whitespace-pre-wrap [overflow-wrap:anywhere]",
-                            )}
-                          >
-                            {m.text}
-                          </p>
-                          <div className="flex flex-1 items-center justify-end gap-2">
-                            <span className="text-xs">
-                              {dayjs(m.createdAt).format("HH:mm")}
-                            </span>
-                            {isMyMessage ? (
-                              <BiCheck className="flex-shrink-0 text-xl" />
-                            ) : null}
-                          </div>
-                        </div>
-                      ))}
-                      <div ref={lastListElRef} />
-                    </div>
+                    > */}
+                    {messages.map((m) => (
+                      <MessageBox
+                        key={m.id}
+                        id={m.id}
+                        text={m.text}
+                        isMyMessage={isMyMessage}
+                        createdAt={m.createdAt}
+                        isViewed={m.views.some((v) => v.id === m.recipientId)}
+                        recipientId={m.recipientId!}
+                      />
+                    ))}
+                    <div ref={lastListElRef} />
+                    {/* </div> */}
                   </div>
                 );
               })

@@ -39,6 +39,7 @@ export const messagesRouter = createTRPCRouter({
               username: true,
             },
           },
+          views: true,
         },
         orderBy: {
           createdAt: "asc",
@@ -68,6 +69,23 @@ export const messagesRouter = createTRPCRouter({
       });
 
       return newMessage;
+    }),
+
+  viewMessage: protectedProcedure
+    .input(z.object({ messageId: z.string(), recipientId: z.string() }))
+    .mutation(async (opts) => {
+      return await opts.ctx.db.message.update({
+        where: {
+          id: opts.input.messageId,
+        },
+        data: {
+          views: {
+            connect: {
+              id: opts.input.recipientId,
+            },
+          },
+        },
+      });
     }),
 
   getAllConversations: protectedProcedure.query(async (opts) => {
@@ -115,6 +133,9 @@ export const messagesRouter = createTRPCRouter({
       },
       include: {
         sendedMessages: {
+          include: {
+            views: true,
+          },
           where: {
             OR: [
               {
@@ -128,6 +149,9 @@ export const messagesRouter = createTRPCRouter({
           // take: -1,
         },
         recivedMessages: {
+          include: {
+            views: true,
+          },
           where: {
             OR: [
               {

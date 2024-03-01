@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
-import { BiCheckDouble, BiPlus, BiSearch } from "react-icons/bi";
+import { BiCheck, BiCheckDouble, BiPlus, BiSearch } from "react-icons/bi";
 import { api } from "~/libs/api";
 import { PagePathMap } from "~/libs/enums";
 import { cn } from "~/libs/utils";
@@ -25,7 +25,10 @@ export const Sidebar: React.FC = () => {
 
   const getLastMessage = (
     conversation: Prisma.UserGetPayload<{
-      include: { sendedMessages: true; recivedMessages: true };
+      include: {
+        sendedMessages: { include: { views: true } };
+        recivedMessages: { include: { views: true } };
+      };
     }>,
   ) => {
     const messages = [
@@ -97,6 +100,10 @@ export const Sidebar: React.FC = () => {
                 const isMyLastMessage =
                   lastMessage.senderId === session?.user.id;
 
+                const isViewedLastMessage = lastMessage.views.some(
+                  (v) => v.id === lastMessage.recipientId,
+                );
+
                 return (
                   <Button
                     key={conversation.id}
@@ -116,7 +123,11 @@ export const Sidebar: React.FC = () => {
                           {conversation?.name}
                         </strong>
                         {isMyLastMessage ? (
-                          <BiCheckDouble className="text-xl text-primary" />
+                          isViewedLastMessage ? (
+                            <BiCheckDouble className="text-xl text-primary" />
+                          ) : (
+                            <BiCheck className="text-xl text-primary" />
+                          )
                         ) : null}
                         <time
                           className="opacity-50"
