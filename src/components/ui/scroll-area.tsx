@@ -11,7 +11,14 @@ const ScrollArea = React.forwardRef<
   }
 >(
   (
-    { className, children, fullWidthContainer, isScrollLock, ...props },
+    {
+      className,
+      children,
+      fullWidthContainer,
+      isScrollLock,
+      onScroll,
+      ...props
+    },
     ref,
   ) => (
     <ScrollAreaPrimitive.Root
@@ -33,6 +40,7 @@ const ScrollArea = React.forwardRef<
           },
         )}
         ref={ref}
+        onScroll={onScroll}
       >
         {children}
       </ScrollAreaPrimitive.Viewport>

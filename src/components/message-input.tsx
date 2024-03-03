@@ -29,7 +29,41 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       if (!recipient || !session?.user) return;
 
       await utils.messages.getByRecipientId.cancel();
-      const prevData = utils.messages.getByRecipientId.getData();
+      await utils.messages.getAllConversations.cancel();
+      const prevDataMessages = utils.messages.getByRecipientId.getData();
+      const prevDataConversations =
+        utils.messages.getAllConversations.getData();
+
+      utils.messages.getAllConversations.setData(undefined, (old) => {
+        if (!old) return;
+
+        return old.map((conversation) => {
+          if (conversation.id === recipient.id) {
+            return {
+              ...conversation,
+              recievedMessages: [
+                ...conversation.recievedMessages,
+                {
+                  id: crypto.randomUUID(),
+                  createdAt: new Date(),
+                  images: newMessage.images,
+                  text: newMessage.text!,
+                  isEdited: false,
+                  isRecipientReaded: false,
+                  recipientId: recipient.id,
+                  senderId: session.user.id,
+                  channelId: null,
+                  groupId: null,
+                  views: [],
+                  pending: true,
+                },
+              ],
+            };
+          }
+
+          return conversation;
+        });
+      });
 
       utils.messages.getByRecipientId.setData({ id: recipient.id }, (old) => {
         if (!old) return;
@@ -50,6 +84,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
             channelId: null,
             groupId: null,
             views: [],
+            pending: true,
           },
         ];
       });
@@ -63,7 +98,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       setTextAreaValue("");
       if (textAreaRef.current) textAreaRef.current.style.height = "2.25rem";
 
-      return { prevData };
+      return { prevDataMessages, prevDataConversations };
     },
     onError(error) {
       toast.error(error.message);
@@ -72,6 +107,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     onSettled() {
       // Sync with server once mutation has settled
       void utils.messages.getByRecipientId.invalidate();
+      void utils.messages.getAllConversations.invalidate();
     },
   });
 
@@ -92,7 +128,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 
   return (
     <form
-      className="full-width sticky bottom-0 border-t bg-background"
+      className="full-width sticky top-[100dvh] border-t bg-background"
       onSubmit={submitHandler}
       ref={formRef}
       encType="multipart/form-data"
@@ -116,7 +152,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           </label>
         </Button>
         <Textarea
-          className="no-scrollbar flex h-9 max-h-40 min-h-full resize-none items-center justify-center border-none py-2"
+          className="no-scrollbar flex h-9 max-h-40 min-h-full resize-none items-center justify-center border-none py-2 shadow-none"
           name="text"
           placeholder="Написать сообщение..."
           ref={textAreaRef}

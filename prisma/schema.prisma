@@ -93,9 +93,9 @@ model User {
     accounts      Account[]
     sessions      Session[]
 
-    sendedMessages  Message[] @relation("sender")
-    recivedMessages Message[] @relation("recipient")
-    viewedMessages  Message[] @relation("views")
+    sendedMessages   Message[] @relation("sender")
+    recievedMessages Message[] @relation("recipient")
+    viewedMessages   Message[] @relation("views")
 
     channels Channel[]
     groups   Group[]

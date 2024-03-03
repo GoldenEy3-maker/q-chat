@@ -1,3 +1,4 @@
+import { type Prisma } from "@prisma/client";
 import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -6,10 +7,12 @@ import React, {
   useEffect,
   useImperativeHandle,
   useRef,
+  useState,
 } from "react";
 import { BiMessageSquareX } from "react-icons/bi";
 import { type RouterOutputs } from "~/libs/api";
 import { cn } from "~/libs/utils";
+import DateBadge from "./date-badge";
 import { MessageBox } from "./message-box";
 import { ScrollArea } from "./ui/scroll-area";
 import { Skeleton } from "./ui/skeleton";
@@ -35,6 +38,10 @@ const useAutoScrollToBottom = (
 export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
   ({ messages, isLoading }, ref) => {
     const { data: session } = useSession();
+
+    const [isScrollIdle, setIsScrollIdle] = useState(false);
+
+    const scrollIdleTimerRef = useRef<NodeJS.Timeout | null>(null);
     const lastListElRef = useRef<HTMLDivElement>(null);
 
     const groupMessages = () => {
@@ -44,29 +51,39 @@ export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
 
       const newMessages = messages.slice(1).reduce(
         (acc, m) => {
-          const lastMessages = acc.at(-1)!;
+          const lastDay = acc.at(-1)!;
+          const lastMessages = lastDay.at(-1)!;
           const lastMsg = lastMessages.at(-1);
 
           if (
-            lastMsg?.senderId === m.senderId &&
-            dayjs(m.createdAt).diff(lastMsg?.createdAt, "minute") < 5
+            m.createdAt.toDateString() === lastMsg?.createdAt.toDateString()
           ) {
-            lastMessages?.push(m);
-            acc[acc.length - 1] = lastMessages;
+            if (
+              lastMsg?.senderId === m.senderId &&
+              dayjs(m.createdAt).diff(lastMsg?.createdAt, "minute") < 5
+            ) {
+              lastMessages.push(m);
+              lastDay[lastDay.length - 1] = lastMessages;
+              acc[acc.length - 1] = lastDay;
+            } else {
+              lastDay.push([m]);
+              acc[acc.length - 1] = lastDay;
+            }
           } else {
-            acc.push([m]);
+            acc.push([[m]]);
           }
 
           return acc;
         },
-        [[firstMsg]],
+        [[[firstMsg]]],
       );
 
-      const groups = newMessages.reduce<Record<number, typeof messages>>(
-        (acc, m) => {
-          const message = m.at(-1)!;
+      const groups = newMessages.reduce<Record<string, (typeof messages)[]>>(
+        (acc, day) => {
+          const lastGroupMessages = day.at(-1)!;
+          const lastMessage = lastGroupMessages.at(-1)!;
 
-          acc[message.createdAt.getTime()] = m;
+          acc[lastMessage.createdAt.getTime()] = day;
           return acc;
         },
         {},
@@ -84,24 +101,47 @@ export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
     return (
       <>
         <ScrollArea
-          className="py-3"
+          className="pb-2"
           fullWidthContainer
           isScrollLock={isLoading}
+          onScroll={() => {
+            if (isScrollIdle) setIsScrollIdle(false);
+
+            if (scrollIdleTimerRef.current) {
+              clearTimeout(scrollIdleTimerRef.current);
+              scrollIdleTimerRef.current = null;
+            }
+
+            scrollIdleTimerRef.current = setTimeout(
+              () => setIsScrollIdle(true),
+              1000,
+            );
+          }}
         >
           {!isLoading ? (
             messages.length > 0 ? (
-              Object.entries(groupMessages()).map(([key, messages]) => {
-                const isMyMessage = session?.user.id === messages[0]?.senderId;
+              Object.entries(groupMessages()).map(([key, days]) => {
+                const date = days.at(-1)!.at(-1)!.createdAt;
 
                 return (
-                  <div
-                    key={key}
-                    className={cn("flex flex-col items-start gap-[0.1rem]", {
-                      // "justify-end": isMyMessage,
-                      "items-end": isMyMessage,
-                    })}
-                  >
-                    {/* <Avatar
+                  <div key={key}>
+                    <DateBadge date={date} isScrollIdle={isScrollIdle} />
+                    {days.map((group, idx) => {
+                      const isMyMessage =
+                        session?.user.id === group[0]?.senderId;
+
+                      return (
+                        <div
+                          key={idx}
+                          className={cn(
+                            "flex flex-col items-start gap-[0.1rem]",
+                            {
+                              // "justify-end": isMyMessage,
+                              "items-end": isMyMessage,
+                            },
+                          )}
+                        >
+                          {/* <Avatar
                       src={messages[0]?.sender.image}
                       alt="Аватар пользователя"
                       fallback={messages[0]?.sender.name?.at(0)}
@@ -109,7 +149,7 @@ export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
                         "order-2": isMyMessage,
                       })}
                     /> */}
-                    {/* <div
+                          {/* <div
                       className={cn(
                         "flex flex-col gap-[0.1rem] overflow-hidden",
                         {
@@ -117,19 +157,36 @@ export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
                         },
                       )}
                     > */}
-                    {messages.map((m) => (
-                      <MessageBox
-                        key={m.id}
-                        id={m.id}
-                        text={m.text}
-                        isMyMessage={isMyMessage}
-                        createdAt={m.createdAt}
-                        isViewed={m.views.some((v) => v.id === m.recipientId)}
-                        recipientId={m.recipientId!}
-                      />
-                    ))}
-                    <div ref={lastListElRef} />
-                    {/* </div> */}
+                          {group.map((m) => (
+                            <MessageBox
+                              key={m.id}
+                              id={m.id}
+                              text={m.text}
+                              isMyMessage={isMyMessage}
+                              createdAt={m.createdAt}
+                              isViewed={m.views.some(
+                                (v) => v.id === m.recipientId,
+                              )}
+                              pending={
+                                // TODO: need to fix this type
+                                (
+                                  m as Prisma.MessageGetPayload<{
+                                    include: {
+                                      sender: true;
+                                      recipient: true;
+                                      views: true;
+                                    };
+                                  }> & { pending?: boolean }
+                                ).pending
+                              }
+                              recipientId={m.recipientId!}
+                            />
+                          ))}
+                          <div ref={lastListElRef} />
+                          {/* </div> */}
+                        </div>
+                      );
+                    })}
                   </div>
                 );
               })

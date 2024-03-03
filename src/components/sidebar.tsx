@@ -4,7 +4,13 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
-import { BiCheck, BiCheckDouble, BiPlus, BiSearch } from "react-icons/bi";
+import {
+  BiCheck,
+  BiCheckDouble,
+  BiLoaderAlt,
+  BiPlus,
+  BiSearch,
+} from "react-icons/bi";
 import { api } from "~/libs/api";
 import { PagePathMap } from "~/libs/enums";
 import { cn } from "~/libs/utils";
@@ -27,16 +33,18 @@ export const Sidebar: React.FC = () => {
     conversation: Prisma.UserGetPayload<{
       include: {
         sendedMessages: { include: { views: true } };
-        recivedMessages: { include: { views: true } };
+        recievedMessages: { include: { views: true } };
       };
     }>,
-  ) => {
+  ): Prisma.MessageGetPayload<{ include: { views: true } }> & {
+    pending?: boolean;
+  } => {
     const messages = [
       ...conversation.sendedMessages,
-      ...conversation.recivedMessages,
+      ...conversation.recievedMessages,
     ].sort((a, b) => +b.createdAt - +a.createdAt);
 
-    return messages[0];
+    return messages[0]!;
   };
 
   const filteredConversations = useMemo(() => {
@@ -53,7 +61,7 @@ export const Sidebar: React.FC = () => {
         conversation.sendedMessages.some((message) =>
           message.text?.toLocaleLowerCase().trim().includes(value),
         ) ||
-        conversation.recivedMessages.some((message) =>
+        conversation.recievedMessages.some((message) =>
           message.text?.toLocaleLowerCase().trim().includes(value),
         ),
     );
@@ -87,8 +95,8 @@ export const Sidebar: React.FC = () => {
           filteredConversations.length > 0 ? (
             filteredConversations
               .sort((a, b) => {
-                const aLastMessage = getLastMessage(a)!;
-                const bLastMessage = getLastMessage(b)!;
+                const aLastMessage = getLastMessage(a);
+                const bLastMessage = getLastMessage(b);
 
                 return (
                   +bLastMessage.createdAt.getTime() -
@@ -96,7 +104,7 @@ export const Sidebar: React.FC = () => {
                 );
               })
               .map((conversation) => {
-                const lastMessage = getLastMessage(conversation)!;
+                const lastMessage = getLastMessage(conversation);
                 const isMyLastMessage =
                   lastMessage.senderId === session?.user.id;
 
@@ -123,10 +131,12 @@ export const Sidebar: React.FC = () => {
                           {conversation?.name}
                         </strong>
                         {isMyLastMessage ? (
-                          isViewedLastMessage ? (
-                            <BiCheckDouble className="text-xl text-primary" />
+                          lastMessage.pending ? (
+                            <BiLoaderAlt className="text-primary" />
+                          ) : isViewedLastMessage ? (
+                            <BiCheckDouble className="text-primary" />
                           ) : (
-                            <BiCheck className="text-xl text-primary" />
+                            <BiCheck className="text-primary" />
                           )
                         ) : null}
                         <time

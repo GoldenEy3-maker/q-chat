@@ -100,7 +100,7 @@ export const messagesRouter = createTRPCRouter({
           {
             OR: [
               {
-                recivedMessages: {
+                recievedMessages: {
                   some: {
                     OR: [
                       {
@@ -148,7 +148,7 @@ export const messagesRouter = createTRPCRouter({
           },
           // take: -1,
         },
-        recivedMessages: {
+        recievedMessages: {
           include: {
             views: true,
           },

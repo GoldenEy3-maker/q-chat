@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import React from "react";
-import { BiCheck, BiCheckDouble } from "react-icons/bi";
+import { BiCheck, BiCheckDouble, BiLoader, BiLoaderAlt } from "react-icons/bi";
 import { useInView } from "react-intersection-observer";
 import { api } from "~/libs/api";
 import { cn } from "~/libs/utils";
@@ -12,6 +12,7 @@ type MessageBoxProps = {
   createdAt: Date;
   isViewed: boolean;
   recipientId: string;
+  pending?: boolean;
 } & React.ComponentProps<"div">;
 
 export const MessageBox: React.FC<MessageBoxProps> = ({
@@ -22,6 +23,7 @@ export const MessageBox: React.FC<MessageBoxProps> = ({
   className,
   isViewed,
   recipientId,
+  pending,
   ...props
 }) => {
   const viewMessageApi = api.messages.viewMessage.useMutation();
@@ -29,7 +31,7 @@ export const MessageBox: React.FC<MessageBoxProps> = ({
   const { ref } = useInView({
     triggerOnce: true,
     onChange(inView) {
-      if (!isViewed && inView) {
+      if (!isViewed && inView && !isMyMessage) {
         viewMessageApi.mutate({ messageId: id, recipientId });
       }
     },
@@ -51,10 +53,12 @@ export const MessageBox: React.FC<MessageBoxProps> = ({
       <div className="flex flex-1 items-center justify-end gap-2">
         <span className="text-xs">{dayjs(createdAt).format("HH:mm")}</span>
         {isMyMessage ? (
-          isViewed ? (
-            <BiCheckDouble className="flex-shrink-0 text-xl" />
+          pending ? (
+            <BiLoaderAlt className="flex-shrink-0" />
+          ) : isViewed ? (
+            <BiCheckDouble className="flex-shrink-0" />
           ) : (
-            <BiCheck className="flex-shrink-0 text-xl" />
+            <BiCheck className="flex-shrink-0" />
           )
         ) : null}
       </div>
