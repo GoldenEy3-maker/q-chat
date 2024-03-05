@@ -32,7 +32,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   return (
     <header
       className={cn(
-        "full-width sticky top-0 border-b bg-background",
+        "full-width sticky top-0 z-10 border-b bg-background",
         className,
       )}
       {...props}

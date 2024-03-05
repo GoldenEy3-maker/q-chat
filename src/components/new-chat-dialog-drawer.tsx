@@ -167,7 +167,7 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
                   <Button
                     key={user.id}
                     variant="ghost"
-                    className="grid h-full flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
+                    className="grid h-max flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
                     asChild
                     onClick={() => setIsOpen(false)}
                   >

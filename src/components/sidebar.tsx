@@ -39,10 +39,9 @@ export const Sidebar: React.FC = () => {
   ): Prisma.MessageGetPayload<{ include: { views: true } }> & {
     pending?: boolean;
   } => {
-    const messages = [
-      ...conversation.sendedMessages,
-      ...conversation.recievedMessages,
-    ].sort((a, b) => +b.createdAt - +a.createdAt);
+    const messages = conversation.recievedMessages
+      .concat(conversation.sendedMessages)
+      .sort((a, b) => +b.createdAt - +a.createdAt);
 
     return messages[0]!;
   };
@@ -112,6 +111,10 @@ export const Sidebar: React.FC = () => {
                   (v) => v.id === lastMessage.recipientId,
                 );
 
+                const newMessages = conversation.sendedMessages.filter(
+                  (message) => message.views.length === 0,
+                );
+
                 return (
                   <Button
                     key={conversation.id}
@@ -146,9 +149,20 @@ export const Sidebar: React.FC = () => {
                           {dayjs(lastMessage?.createdAt).format("HH:mm")}
                         </time>
                       </div>
-                      <p className="truncate text-muted-foreground">
-                        {lastMessage?.text}
-                      </p>
+                      <div className="flex items-center gap-2 overflow-hidden">
+                        <p className="flex-1 truncate text-muted-foreground">
+                          {lastMessage?.text}
+                        </p>
+                        {newMessages.length > 0 ? (
+                          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
+                            {
+                              conversation.sendedMessages.filter(
+                                (m) => m.views.length === 0,
+                              ).length
+                            }
+                          </span>
+                        ) : null}
+                      </div>
                     </Link>
                   </Button>
                 );

@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import React from "react";
-import { BiCheck, BiCheckDouble, BiLoader, BiLoaderAlt } from "react-icons/bi";
+import { BiCheck, BiCheckDouble, BiLoaderAlt } from "react-icons/bi";
 import { useInView } from "react-intersection-observer";
 import { api } from "~/libs/api";
 import { cn } from "~/libs/utils";
@@ -26,7 +28,55 @@ export const MessageBox: React.FC<MessageBoxProps> = ({
   pending,
   ...props
 }) => {
-  const viewMessageApi = api.messages.viewMessage.useMutation();
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  const utils = api.useUtils();
+
+  const viewMessageApi = api.messages.viewMessage.useMutation({
+    async onMutate(variables) {
+      await utils.messages.getAllConversations.cancel();
+
+      const prevDataConversations =
+        utils.messages.getAllConversations.getData();
+
+      utils.messages.getAllConversations.setData(undefined, (old) => {
+        if (!old) return;
+
+        return old.map((conversation) => {
+          if (conversation.id === router.query.userId) {
+            return {
+              ...conversation,
+              sendedMessages: conversation.sendedMessages.map((message) => {
+                if (message.id === variables.messageId) {
+                  return {
+                    ...message,
+                    views: [
+                      ...message.views,
+                      {
+                        ...session!.user,
+                        emailVerified: null,
+                        password: null,
+                      },
+                    ],
+                  };
+                }
+
+                return message;
+              }),
+            };
+          }
+
+          return conversation;
+        });
+      });
+
+      return { prevDataConversations };
+    },
+    onSettled() {
+      void utils.messages.getAllConversations.invalidate();
+    },
+  });
 
   const { ref } = useInView({
     triggerOnce: true,

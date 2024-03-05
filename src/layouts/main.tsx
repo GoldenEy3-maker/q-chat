@@ -1,5 +1,5 @@
-import Head from "next/head"
-import { Toaster } from "~/components/ui/sonner"
+import Head from "next/head";
+import { Toaster } from "~/components/ui/sonner";
 
 type MainLayoutProps = {
   title?: string;
@@ -19,7 +19,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, title }) => {
       </Head>
       <div
         vaul-drawer-wrapper=""
-        className="flex min-h-svh flex-col bg-background"
+        className="flex min-h-svh flex-col overflow-hidden bg-background"
       >
         {children}
       </div>
