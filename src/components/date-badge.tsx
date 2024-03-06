@@ -16,7 +16,7 @@ const DateBadge: React.FC<DateBadgeProps> = ({ date, isScrollIdle }) => {
     <div className="sticky top-[-1px] py-3 text-center" ref={ref}>
       <span
         className={cn(
-          "rounded-full bg-secondary px-3 py-1 text-sm transition-all duration-200",
+          "rounded-full bg-[hsl(var(--secondary)_/_85%)] px-3 py-1 text-sm backdrop-blur-md transition-all duration-200",
           {
             "invisible opacity-0":
               isScrollIdle && entry?.intersectionRatio

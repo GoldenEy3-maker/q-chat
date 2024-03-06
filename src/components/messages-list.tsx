@@ -42,7 +42,7 @@ export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
     const [isScrollIdle, setIsScrollIdle] = useState(false);
 
     const scrollIdleTimerRef = useRef<NodeJS.Timeout | null>(null);
-    const lastListElRef = useRef<HTMLDivElement>(null);
+    const scrollDownAnchorRef = useRef<HTMLDivElement>(null);
 
     const groupMessages = () => {
       const firstMsg = messages[0];
@@ -93,10 +93,10 @@ export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
     };
 
     useImperativeHandle(ref, () => {
-      return lastListElRef.current!;
+      return scrollDownAnchorRef.current!;
     });
 
-    useAutoScrollToBottom(lastListElRef, isLoading);
+    useAutoScrollToBottom(scrollDownAnchorRef, isLoading);
 
     return (
       <>
@@ -124,7 +124,7 @@ export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
                 const date = days.at(-1)!.at(-1)!.createdAt;
 
                 return (
-                  <div key={key}>
+                  <div key={key} className="flex flex-col gap-y-1">
                     <DateBadge date={date} isScrollIdle={isScrollIdle} />
                     {days.map((group, idx) => {
                       const isMyMessage =
@@ -182,7 +182,6 @@ export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
                               recipientId={m.recipientId!}
                             />
                           ))}
-                          <div ref={lastListElRef} />
                           {/* </div> */}
                         </div>
                       );
@@ -192,7 +191,7 @@ export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
               })
             ) : (
               <div className="m-auto flex flex-col items-center justify-center">
-                <BiMessageSquareX className="mb-2 text-6xl" />
+                <BiMessageSquareX className="mb-2 text-4xl" />
                 <p className="text-center">
                   У вас пока нет сообщений с этим пользователем!
                 </p>
@@ -244,6 +243,7 @@ export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
               </div>
             </>
           )}
+          <div ref={scrollDownAnchorRef} />
         </ScrollArea>
       </>
     );

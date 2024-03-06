@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PusherChannelEventMap } from "~/libs/enums";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const messagesRouter = createTRPCRouter({
@@ -66,7 +67,18 @@ export const messagesRouter = createTRPCRouter({
           text: opts.input.text,
           images: opts.input.images,
         },
+        include: {
+          sender: true,
+          recipient: true,
+          views: true,
+        },
       });
+
+      await opts.ctx.pusher.trigger(
+        `user-${opts.input.id}`,
+        PusherChannelEventMap.IncomingMessage,
+        newMessage,
+      );
 
       return newMessage;
     }),

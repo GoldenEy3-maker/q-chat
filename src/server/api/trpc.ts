@@ -15,6 +15,7 @@ import { ZodError } from "zod";
 
 import { getServerAuthSession } from "~/server/auth";
 import { db } from "~/server/db";
+import { pusher } from "../pusher";
 
 /**
  * 1. CONTEXT
@@ -40,6 +41,7 @@ interface CreateContextOptions {
  */
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
+    pusher,
     session: opts.session,
     db,
   };

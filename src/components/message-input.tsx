@@ -1,4 +1,5 @@
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import React, { useRef, useState } from "react";
 import { BiPaperclip, BiSolidSend } from "react-icons/bi";
 import { toast } from "sonner";
@@ -8,13 +9,14 @@ import { Textarea } from "./ui/textarea";
 
 type MessageInputProps = {
   recipient: RouterOutputs["user"]["getById"] | undefined;
-  lastListElRef: React.RefObject<HTMLDivElement>;
+  listScrollDownAnchorRef: React.RefObject<HTMLDivElement>;
 };
 
 export const MessageInput: React.FC<MessageInputProps> = ({
   recipient,
-  lastListElRef,
+  listScrollDownAnchorRef,
 }) => {
+  const router = useRouter();
   const { data: session } = useSession();
   const [textAreaValue, setTextAreaValue] = useState("");
 
@@ -90,7 +92,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       });
 
       setTimeout(() => {
-        lastListElRef.current?.scrollIntoView({
+        listScrollDownAnchorRef.current?.scrollIntoView({
           behavior: "smooth",
         });
       }, 0);

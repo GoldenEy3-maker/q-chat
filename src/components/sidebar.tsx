@@ -155,11 +155,7 @@ export const Sidebar: React.FC = () => {
                         </p>
                         {newMessages.length > 0 ? (
                           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
-                            {
-                              conversation.sendedMessages.filter(
-                                (m) => m.views.length === 0,
-                              ).length
-                            }
+                            {newMessages.length}
                           </span>
                         ) : null}
                       </div>
