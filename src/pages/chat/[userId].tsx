@@ -36,7 +36,7 @@ const ChatPage: NextPageWithLayout = () => {
   );
 
   return (
-    <main className="container-grid grid grid-rows-[auto_1fr_auto]">
+    <main className="container-grid grid h-dvh grid-rows-[auto_1fr_auto]">
       <ChatHeader
         fallback={getUserByIdApi.data?.name?.at(0)}
         title={getUserByIdApi.data?.name ?? undefined}

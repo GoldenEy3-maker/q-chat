@@ -128,7 +128,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 
   return (
     <form
-      className="full-width sticky top-[100dvh] border-t bg-background"
+      className="full-width sticky bottom-0 border-t bg-background"
       onSubmit={submitHandler}
       ref={formRef}
       encType="multipart/form-data"
