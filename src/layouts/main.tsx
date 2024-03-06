@@ -19,7 +19,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, title }) => {
       </Head>
       <div
         vaul-drawer-wrapper=""
-        className="flex h-svh flex-col overflow-x-hidden bg-background"
+        className="flex h-dvh flex-col overflow-x-hidden bg-background"
       >
         {children}
       </div>
