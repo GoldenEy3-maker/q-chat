@@ -1,15 +1,15 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { type BuiltInProviderType } from "next-auth/providers/index"
-import { signIn } from "next-auth/react"
-import { useRouter } from "next/router"
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { BiLogoGithub, BiLogoGoogle } from "react-icons/bi"
-import { FcGoogle } from 'react-icons/fc'
-import { toast } from "sonner"
-import { z } from "zod"
-import { Button } from "~/components/ui/button"
-import { Card, CardContent, CardFooter } from "~/components/ui/card"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { type BuiltInProviderType } from "next-auth/providers/index";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { BiLogoGithub } from "react-icons/bi";
+import { FcGoogle } from "react-icons/fc";
+import { toast } from "sonner";
+import { z } from "zod";
+import { Button } from "~/components/ui/button";
+import { Card, CardContent, CardFooter } from "~/components/ui/card";
 import {
   Form,
   FormControl,
@@ -17,15 +17,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "~/components/ui/form"
-import { Input } from "~/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
-import { MainLayout } from "~/layouts/main"
-import { api } from "~/libs/api"
-import { PagePathMap } from "~/libs/enums"
-import { signUpFormSchema } from "~/libs/schemas"
-import { type ValueOf } from "~/libs/utils"
-import { type NextPageWithLayout } from "./_app"
+} from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { MainLayout } from "~/layouts/main";
+import { api } from "~/libs/api";
+import { PagePathMap } from "~/libs/enums";
+import { signUpFormSchema } from "~/libs/schemas";
+import { type ValueOf } from "~/libs/utils";
+import { type NextPageWithLayout } from "./_app";
 
 const signInFormSchema = z.object({
   email: z.string().email({

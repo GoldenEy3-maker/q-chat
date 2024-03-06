@@ -3,7 +3,6 @@ import { Cross2Icon } from "@radix-ui/react-icons";
 import * as React from "react";
 
 import { cn } from "~/libs/utils";
-import { ScrollArea } from "./scroll-area";
 
 const Dialog = DialogPrimitive.Root;
 
