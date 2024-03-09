@@ -16,7 +16,7 @@ export const Navbar: React.FC = () => {
   const { setTheme, theme } = useTheme();
 
   return (
-    <nav className="sticky left-0 top-0 hidden max-h-svh flex-col items-center gap-2 border-r md:flex">
+    <nav className="sticky top-0 hidden h-screen flex-col items-center gap-2 border-r md:flex">
       <ScrollArea className="h-full px-2 py-4">
         <Button
           asChild

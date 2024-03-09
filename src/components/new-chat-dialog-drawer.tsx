@@ -186,29 +186,36 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
                       +b.lastOnlineAt.getTime() - +a.lastOnlineAt.getTime()
                     );
                   })
-                  .map((user) => (
-                    <Button
-                      key={user.id}
-                      variant="ghost"
-                      className="grid h-max flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                      asChild
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <Link href={PagePathMap.Chat + user.id}>
-                        <Avatar
-                          className="row-span-2"
-                          fallback={user.name?.at(0)}
-                          src={user.image}
-                          alt="Аватар пользователя"
-                          isOnline
-                        />
-                        <strong className="truncate">{user.name}</strong>
-                        <span className="truncate text-muted-foreground">
-                          Онлайн
-                        </span>
-                      </Link>
-                    </Button>
-                  ))
+                  .map((user) => {
+                    const isOnline = onlineUsersStore.members.includes(user.id);
+
+                    return (
+                      <Button
+                        key={user.id}
+                        variant="ghost"
+                        className="grid h-max flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
+                        asChild
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <Link href={PagePathMap.Chat + user.id}>
+                          <Avatar
+                            className="row-span-2"
+                            fallback={user.name?.at(0)}
+                            src={user.image}
+                            alt="Аватар пользователя"
+                            isOnline={isOnline}
+                          />
+                          <strong className="truncate">{user.name}</strong>
+                          <span className="truncate text-muted-foreground">
+                            {isOnline
+                              ? "Онлайн"
+                              : "Был(а) в сети " +
+                                dayjs(user.lastOnlineAt).fromNow()}
+                          </span>
+                        </Link>
+                      </Button>
+                    );
+                  })
               ) : (
                 <p className="py-4 text-center">Ничего не найдено</p>
               )

@@ -98,50 +98,68 @@ export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
 
     useAutoScrollToBottom(scrollDownAnchorRef, isLoading);
 
+    useEffect(() => {
+      const scrollHandler = () => {
+        if (isScrollIdle) setIsScrollIdle(false);
+
+        if (scrollIdleTimerRef.current) {
+          clearTimeout(scrollIdleTimerRef.current);
+          scrollIdleTimerRef.current = null;
+        }
+
+        scrollIdleTimerRef.current = setTimeout(
+          () => setIsScrollIdle(true),
+          1000,
+        );
+      };
+
+      document.addEventListener("scroll", scrollHandler);
+
+      return () => document.removeEventListener("scroll", scrollHandler);
+    }, [isScrollIdle]);
+
     return (
-      <>
-        <ScrollArea
-          className="pb-2"
-          fullWidthContainer
-          isScrollLock={isLoading}
-          onScroll={() => {
-            if (isScrollIdle) setIsScrollIdle(false);
+      <div
+        className="full-width min-h-[calc(100vh-7.1rem)] pb-2"
+        // fullWidthContainer
+        // isScrollLock={isLoading}
+        // onScroll={() => {
+        //   if (isScrollIdle) setIsScrollIdle(false);
 
-            if (scrollIdleTimerRef.current) {
-              clearTimeout(scrollIdleTimerRef.current);
-              scrollIdleTimerRef.current = null;
-            }
+        //   if (scrollIdleTimerRef.current) {
+        //     clearTimeout(scrollIdleTimerRef.current);
+        //     scrollIdleTimerRef.current = null;
+        //   }
 
-            scrollIdleTimerRef.current = setTimeout(
-              () => setIsScrollIdle(true),
-              1000,
-            );
-          }}
-        >
-          {!isLoading ? (
-            messages.length > 0 ? (
-              Object.entries(groupMessages()).map(([key, days]) => {
-                const date = days.at(-1)!.at(-1)!.createdAt;
+        //   scrollIdleTimerRef.current = setTimeout(
+        //     () => setIsScrollIdle(true),
+        //     1000,
+        //   );
+        // }}
+      >
+        {!isLoading ? (
+          messages.length > 0 ? (
+            Object.entries(groupMessages()).map(([key, days]) => {
+              const date = days.at(-1)!.at(-1)!.createdAt;
 
-                return (
-                  <div key={key} className="flex flex-col gap-y-1">
-                    <DateBadge date={date} isScrollIdle={isScrollIdle} />
-                    {days.map((group, idx) => {
-                      const isMyMessage =
-                        session?.user.id === group[0]?.senderId;
+              return (
+                <div key={key} className="flex flex-col gap-y-1">
+                  <DateBadge date={date} isScrollIdle={isScrollIdle} />
+                  {days.map((group, idx) => {
+                    const isMyMessage = session?.user.id === group[0]?.senderId;
 
-                      return (
-                        <div
-                          key={idx}
-                          className={cn(
-                            "flex flex-col items-start gap-[0.1rem]",
-                            {
-                              // "justify-end": isMyMessage,
-                              "items-end": isMyMessage,
-                            },
-                          )}
-                        >
-                          {/* <Avatar
+                    return (
+                      <div
+                        key={idx}
+                        className={cn(
+                          "flex flex-col items-start gap-[0.1rem]",
+                          {
+                            // "justify-end": isMyMessage,
+                            "items-end": isMyMessage,
+                          },
+                        )}
+                      >
+                        {/* <Avatar
                       src={messages[0]?.sender.image}
                       alt="Аватар пользователя"
                       fallback={messages[0]?.sender.name?.at(0)}
@@ -149,7 +167,7 @@ export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
                         "order-2": isMyMessage,
                       })}
                     /> */}
-                          {/* <div
+                        {/* <div
                       className={cn(
                         "flex flex-col gap-[0.1rem] overflow-hidden",
                         {
@@ -157,95 +175,94 @@ export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
                         },
                       )}
                     > */}
-                          {group.map((m) => (
-                            <MessageBox
-                              key={m.id}
-                              id={m.id}
-                              text={m.text}
-                              isMyMessage={isMyMessage}
-                              createdAt={m.createdAt}
-                              isViewed={m.views.some(
-                                (v) => v.id === m.recipientId,
-                              )}
-                              pending={
-                                // TODO: need to fix this type
-                                (
-                                  m as Prisma.MessageGetPayload<{
-                                    include: {
-                                      sender: true;
-                                      recipient: true;
-                                      views: true;
-                                    };
-                                  }> & { pending?: boolean }
-                                ).pending
-                              }
-                              recipientId={m.recipientId!}
-                            />
-                          ))}
-                          {/* </div> */}
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              })
-            ) : (
-              <div className="m-auto flex flex-col items-center justify-center">
-                <BiMessageSquareX className="mb-2 text-4xl" />
-                <p className="text-center">
-                  У вас пока нет сообщений с этим пользователем!
-                </p>
-              </div>
-            )
+                        {group.map((m) => (
+                          <MessageBox
+                            key={m.id}
+                            id={m.id}
+                            text={m.text}
+                            isMyMessage={isMyMessage}
+                            createdAt={m.createdAt}
+                            isViewed={m.views.some(
+                              (v) => v.id === m.recipientId,
+                            )}
+                            pending={
+                              // TODO: need to fix this type
+                              (
+                                m as Prisma.MessageGetPayload<{
+                                  include: {
+                                    sender: true;
+                                    recipient: true;
+                                    views: true;
+                                  };
+                                }> & { pending?: boolean }
+                              ).pending
+                            }
+                            recipientId={m.recipientId!}
+                          />
+                        ))}
+                        {/* </div> */}
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })
           ) : (
-            <>
-              <div className="flex items-end gap-2">
-                <Skeleton className="sticky bottom-0 left-0 h-10 w-10 rounded-full" />
-                <div className="flex flex-col gap-2">
-                  <Skeleton className="h-14 w-[13rem]" />
-                  <Skeleton className="h-6 w-[8rem]" />
-                </div>
+            <div className="m-auto flex flex-col items-center justify-center">
+              <BiMessageSquareX className="mb-2 text-4xl" />
+              <p className="text-center">
+                У вас пока нет сообщений с этим пользователем!
+              </p>
+            </div>
+          )
+        ) : (
+          <>
+            <div className="flex items-end gap-2">
+              <Skeleton className="sticky bottom-0 left-0 h-10 w-10 rounded-full" />
+              <div className="flex flex-col gap-2">
+                <Skeleton className="h-14 w-[13rem]" />
+                <Skeleton className="h-6 w-[8rem]" />
               </div>
-              <div className="ml-auto flex items-end gap-2">
-                <Skeleton className="sticky bottom-0 left-0 order-2 h-10 w-10 rounded-full" />
-                <div className="flex flex-col items-end gap-2">
-                  <Skeleton className="h-6 w-[8rem]" />
-                  <Skeleton className="h-14 w-[13rem]" />
-                </div>
+            </div>
+            <div className="ml-auto flex items-end gap-2">
+              <Skeleton className="sticky bottom-0 left-0 order-2 h-10 w-10 rounded-full" />
+              <div className="flex flex-col items-end gap-2">
+                <Skeleton className="h-6 w-[8rem]" />
+                <Skeleton className="h-14 w-[13rem]" />
               </div>
-              <div className="flex items-end gap-2">
-                <Skeleton className="sticky bottom-0 left-0 h-10 w-10 rounded-full" />
-                <div className="flex flex-col gap-2">
-                  <Skeleton className="h-14 w-[13rem]" />
-                </div>
+            </div>
+            <div className="flex items-end gap-2">
+              <Skeleton className="sticky bottom-0 left-0 h-10 w-10 rounded-full" />
+              <div className="flex flex-col gap-2">
+                <Skeleton className="h-14 w-[13rem]" />
               </div>
-              <div className="ml-auto flex items-end gap-2">
-                <Skeleton className="sticky bottom-0 left-0 order-2 h-10 w-10 rounded-full" />
-                <div className="flex flex-col items-end gap-2">
-                  <Skeleton className="h-14 w-[13rem]" />
-                  <Skeleton className="h-6 w-[10rem]" />
-                  <Skeleton className="h-6 w-[6rem]" />
-                </div>
+            </div>
+            <div className="ml-auto flex items-end gap-2">
+              <Skeleton className="sticky bottom-0 left-0 order-2 h-10 w-10 rounded-full" />
+              <div className="flex flex-col items-end gap-2">
+                <Skeleton className="h-14 w-[13rem]" />
+                <Skeleton className="h-6 w-[10rem]" />
+                <Skeleton className="h-6 w-[6rem]" />
               </div>
-              <div className="flex items-end gap-2">
-                <Skeleton className="sticky bottom-0 left-0 h-10 w-10 rounded-full" />
-                <div className="flex flex-col gap-2">
-                  <Skeleton className="h-6 w-[10rem]" />
-                  <Skeleton className="h-6 w-[6rem]" />
-                </div>
+            </div>
+            <div className="flex items-end gap-2">
+              <Skeleton className="sticky bottom-0 left-0 h-10 w-10 rounded-full" />
+              <div className="flex flex-col gap-2">
+                <Skeleton className="h-6 w-[10rem]" />
+                <Skeleton className="h-6 w-[6rem]" />
               </div>
-              <div className="ml-auto flex items-end gap-2">
-                <Skeleton className="sticky bottom-0 left-0 order-2 h-10 w-10 rounded-full" />
-                <div className="flex flex-col items-end gap-2">
-                  <Skeleton className="h-8 w-[10rem]" />
-                  <Skeleton className="h-8 w-[6rem]" />
-                </div>
+            </div>
+            <div className="ml-auto flex items-end gap-2">
+              <Skeleton className="sticky bottom-0 left-0 order-2 h-10 w-10 rounded-full" />
+              <div className="flex flex-col items-end gap-2">
+                <Skeleton className="h-8 w-[10rem]" />
+                <Skeleton className="h-8 w-[6rem]" />
               </div>
-            </>
-          )}
-          <div ref={scrollDownAnchorRef} />
-        </ScrollArea>
-      </>
+            </div>
+          </>
+        )}
+        <div ref={scrollDownAnchorRef} />
+      </div>
     );
   },
 );

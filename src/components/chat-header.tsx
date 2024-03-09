@@ -32,7 +32,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   return (
     <header
       className={cn(
-        "full-width sticky top-0 z-10 border-b bg-background",
+        "full-width sticky top-0 z-10 border-b bg-background py-1",
         className,
       )}
       {...props}
@@ -67,7 +67,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
             <strong className="col-start-3 row-start-1 truncate md:col-start-2">
               {title}
             </strong>
-            <span className="col-start-3 row-start-2 truncate text-muted-foreground md:col-start-2">
+            <span className="col-start-3 row-start-2 truncate text-sm text-muted-foreground md:col-start-2">
               {subtitle}
             </span>
             <div className="col-start-4 row-span-2 flex items-center gap-2 md:col-start-3">
