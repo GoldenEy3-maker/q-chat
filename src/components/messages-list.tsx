@@ -98,44 +98,44 @@ export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
 
     useAutoScrollToBottom(scrollDownAnchorRef, isLoading);
 
-    useEffect(() => {
-      const scrollHandler = () => {
-        if (isScrollIdle) setIsScrollIdle(false);
+    // useEffect(() => {
+    //   const scrollHandler = () => {
+    //     if (isScrollIdle) setIsScrollIdle(false);
 
-        if (scrollIdleTimerRef.current) {
-          clearTimeout(scrollIdleTimerRef.current);
-          scrollIdleTimerRef.current = null;
-        }
+    //     if (scrollIdleTimerRef.current) {
+    //       clearTimeout(scrollIdleTimerRef.current);
+    //       scrollIdleTimerRef.current = null;
+    //     }
 
-        scrollIdleTimerRef.current = setTimeout(
-          () => setIsScrollIdle(true),
-          1000,
-        );
-      };
+    //     scrollIdleTimerRef.current = setTimeout(
+    //       () => setIsScrollIdle(true),
+    //       1000,
+    //     );
+    //   };
 
-      document.addEventListener("scroll", scrollHandler);
+    //   document.addEventListener("scroll", scrollHandler);
 
-      return () => document.removeEventListener("scroll", scrollHandler);
-    }, [isScrollIdle]);
+    //   return () => document.removeEventListener("scroll", scrollHandler);
+    // }, [isScrollIdle]);
 
     return (
-      <div
-        className="full-width min-h-[calc(100vh-7.1rem)] pb-2"
-        // fullWidthContainer
-        // isScrollLock={isLoading}
-        // onScroll={() => {
-        //   if (isScrollIdle) setIsScrollIdle(false);
+      <ScrollArea
+        className="pb-2"
+        fullWidthContainer
+        isScrollLock={isLoading}
+        onScroll={() => {
+          if (isScrollIdle) setIsScrollIdle(false);
 
-        //   if (scrollIdleTimerRef.current) {
-        //     clearTimeout(scrollIdleTimerRef.current);
-        //     scrollIdleTimerRef.current = null;
-        //   }
+          if (scrollIdleTimerRef.current) {
+            clearTimeout(scrollIdleTimerRef.current);
+            scrollIdleTimerRef.current = null;
+          }
 
-        //   scrollIdleTimerRef.current = setTimeout(
-        //     () => setIsScrollIdle(true),
-        //     1000,
-        //   );
-        // }}
+          scrollIdleTimerRef.current = setTimeout(
+            () => setIsScrollIdle(true),
+            1000,
+          );
+        }}
       >
         {!isLoading ? (
           messages.length > 0 ? (
@@ -262,7 +262,7 @@ export const MessagesList = forwardRef<HTMLDivElement, MessagesListProps>(
           </>
         )}
         <div ref={scrollDownAnchorRef} />
-      </div>
+      </ScrollArea>
     );
   },
 );

@@ -7,9 +7,9 @@ import { useMemo, useState } from "react";
 import {
   BiCheck,
   BiCheckDouble,
-  BiLoaderAlt,
   BiPlus,
   BiSearch,
+  BiTimeFive,
 } from "react-icons/bi";
 import { api } from "~/libs/api";
 import { PagePathMap } from "~/libs/enums";
@@ -72,7 +72,7 @@ export const Sidebar: React.FC = () => {
 
   return (
     <aside
-      className={cn("h-screen border-r md:sticky md:top-0", {
+      className={cn("h-dvh border-r md:sticky md:top-0", {
         "hidden md:grid": router.asPath.includes(PagePathMap.Chat),
       })}
     >
@@ -139,7 +139,7 @@ export const Sidebar: React.FC = () => {
                           </strong>
                           {isMyLastMessage ? (
                             lastMessage.pending ? (
-                              <BiLoaderAlt className="text-primary" />
+                              <BiTimeFive className="text-primary" />
                             ) : isViewedLastMessage ? (
                               <BiCheckDouble className="text-primary" />
                             ) : (

@@ -16,8 +16,8 @@ const DateBadge: React.FC<DateBadgeProps> = ({ date, isScrollIdle }) => {
 
   return (
     <div
-      className={cn("sticky top-[-1px] pb-3 pt-[4.5rem] text-center", {
-        "pt-3": entry?.intersectionRatio === 1,
+      className={cn("sticky top-[-1px] py-3 text-center", {
+        // "pt-3": entry?.intersectionRatio === 1,
       })}
       ref={ref}
     >

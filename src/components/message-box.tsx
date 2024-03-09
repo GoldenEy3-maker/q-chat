@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
-import { BiCheck, BiCheckDouble, BiLoaderAlt } from "react-icons/bi";
+import { BiCheck, BiCheckDouble, BiTimeFive } from "react-icons/bi";
 import { useInView } from "react-intersection-observer";
 import { api } from "~/libs/api";
 import { cn } from "~/libs/utils";
@@ -104,7 +104,7 @@ export const MessageBox: React.FC<MessageBoxProps> = ({
         <span className="text-xs">{dayjs(createdAt).format("HH:mm")}</span>
         {isMyMessage ? (
           pending ? (
-            <BiLoaderAlt className="flex-shrink-0" />
+            <BiTimeFive className="flex-shrink-0" />
           ) : isViewed ? (
             <BiCheckDouble className="flex-shrink-0" />
           ) : (
