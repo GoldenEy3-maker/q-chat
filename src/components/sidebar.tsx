@@ -14,6 +14,7 @@ import {
 import { api } from "~/libs/api";
 import { PagePathMap } from "~/libs/enums";
 import { cn } from "~/libs/utils";
+import { useOnlineUsersStore } from "~/store/online-users";
 import { Avatar } from "./avatar";
 import { NavDrawer } from "./navdrawer";
 import { NewChatDialogDrawer } from "./new-chat-dialog-drawer";
@@ -25,6 +26,9 @@ import { Skeleton } from "./ui/skeleton";
 export const Sidebar: React.FC = () => {
   const { data: session } = useSession();
   const router = useRouter();
+
+  const onlineUsersStore = useOnlineUsersStore();
+
   const [searchValue, setSearchValue] = useState("");
 
   const getAllConversationsApi = api.messages.getAllConversations.useQuery();
@@ -126,7 +130,9 @@ export const Sidebar: React.FC = () => {
                       <Avatar
                         fallback={conversation?.name?.at(0)}
                         src={conversation?.image}
-                        isOnline
+                        isOnline={onlineUsersStore.members.includes(
+                          conversation.id,
+                        )}
                         className="row-span-2 h-12 w-12"
                       />
                       <div className="flex items-center gap-2 overflow-hidden">

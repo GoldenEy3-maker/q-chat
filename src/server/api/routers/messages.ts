@@ -86,7 +86,7 @@ export const messagesRouter = createTRPCRouter({
   viewMessage: protectedProcedure
     .input(z.object({ messageId: z.string(), recipientId: z.string() }))
     .mutation(async (opts) => {
-      return await opts.ctx.db.message.update({
+      const updatedMessage = await opts.ctx.db.message.update({
         where: {
           id: opts.input.messageId,
         },
@@ -98,6 +98,14 @@ export const messagesRouter = createTRPCRouter({
           },
         },
       });
+
+      await opts.ctx.pusher.trigger(
+        `user-${updatedMessage.senderId}`,
+        PusherChannelEventMap.ViewingMessage,
+        updatedMessage,
+      );
+
+      return updatedMessage;
     }),
 
   getAllConversations: protectedProcedure.query(async (opts) => {

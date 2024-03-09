@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async (opts) => {
@@ -30,5 +30,20 @@ export const userRouter = createTRPCRouter({
         });
 
       return user;
+    }),
+
+  updateOnlineAt: publicProcedure
+    .input(z.object({ id: z.string(), date: z.date() }))
+    .mutation(async (opts) => {
+      const updatedUser = await opts.ctx.db.user.update({
+        where: {
+          id: opts.input.id,
+        },
+        data: {
+          lastOnlineAt: opts.input.date,
+        },
+      });
+
+      return updatedUser;
     }),
 });

@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
@@ -19,14 +20,71 @@ import { MainLayout } from "~/layouts/main";
 import { api, type RouterOutputs } from "~/libs/api";
 import { PusherChannelEventMap } from "~/libs/enums";
 import { pusher } from "~/libs/pusher";
+import { useOnlineUsersStore } from "~/store/online-users";
 import { type NextPageWithLayout } from "../_app";
+
+const useSubscribeToIncomingMessages = (
+  scrollDownAnchorRef: React.RefObject<HTMLDivElement>,
+) => {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const utils = api.useUtils();
+
+  useEffect(() => {
+    if (!scrollDownAnchorRef.current || !session?.user) return;
+
+    const channel = pusher.subscribe(`user-${session.user.id}`);
+
+    channel.bind(
+      PusherChannelEventMap.IncomingMessage,
+      async (newMessage: RouterOutputs["messages"]["sendToRecipient"]) => {
+        await utils.messages.getByRecipientId.invalidate();
+
+        if (router.query.userId === newMessage.senderId) {
+          setTimeout(() => {
+            scrollDownAnchorRef.current!.scrollIntoView({
+              behavior: "smooth",
+            });
+          }, 0);
+        }
+      },
+    );
+
+    return () => channel.unbind().unsubscribe();
+  }, [
+    router.query.userId,
+    session,
+    scrollDownAnchorRef,
+    utils.messages.getByRecipientId,
+    utils.messages.getAllConversations,
+  ]);
+};
+
+const useSubscribeToViewingMessage = () => {
+  const { data: session } = useSession();
+  const utils = api.useUtils();
+
+  useEffect(() => {
+    if (!session?.user) return;
+
+    const channel = pusher.subscribe(`user-${session.user.id}`);
+
+    channel.bind(PusherChannelEventMap.ViewingMessage, () => {
+      void utils.messages.getAllConversations.invalidate();
+      void utils.messages.getByRecipientId.invalidate();
+    });
+
+    return () => channel.unbind().unsubscribe();
+  }, [
+    session,
+    utils.messages.getAllConversations,
+    utils.messages.getByRecipientId,
+  ]);
+};
 
 const ChatPage: NextPageWithLayout = () => {
   const router = useRouter();
-  const { data: session } = useSession();
   const scrollDownAnchorRef = useRef<HTMLDivElement>(null);
-
-  const utils = api.useUtils();
 
   const getUserByIdApi = api.user.getById.useQuery({
     id: router.query.userId as string,
@@ -41,36 +99,13 @@ const ChatPage: NextPageWithLayout = () => {
     },
   );
 
-  useEffect(() => {
-    if (!getUserByIdApi.data || !scrollDownAnchorRef.current) return;
+  const onlineUsersStore = useOnlineUsersStore();
+  const isOnline = onlineUsersStore.members.includes(
+    getUserByIdApi.data?.id ?? "",
+  );
 
-    const scrollAnchor = scrollDownAnchorRef.current;
-
-    const channel = pusher.subscribe(`user-${session?.user.id}`);
-
-    channel.bind(
-      PusherChannelEventMap.IncomingMessage,
-      async (newMessage: RouterOutputs["messages"]["sendToRecipient"]) => {
-        await utils.messages.getByRecipientId.invalidate();
-        await utils.messages.getAllConversations.invalidate();
-
-        if (router.query.userId === newMessage.senderId) {
-          setTimeout(() => {
-            scrollAnchor.scrollIntoView({
-              behavior: "smooth",
-            });
-          }, 0);
-        }
-      },
-    );
-
-    return () => channel.unbind().unsubscribe();
-  }, [
-    getUserByIdApi.data,
-    router.query.userId,
-    session?.user.id,
-    scrollDownAnchorRef.current,
-  ]);
+  useSubscribeToIncomingMessages(scrollDownAnchorRef);
+  useSubscribeToViewingMessage();
 
   return (
     <main className="container-grid grid h-dvh grid-rows-[auto_1fr_auto]">
@@ -79,8 +114,13 @@ const ChatPage: NextPageWithLayout = () => {
         title={getUserByIdApi.data?.name ?? undefined}
         src={getUserByIdApi.data?.image}
         alt="Аватар пользователя"
-        subtitle="Онлайн"
-        isOnline
+        subtitle={
+          isOnline
+            ? "Онлайн"
+            : "Был(а) в сети " +
+              dayjs(getUserByIdApi.data?.lastOnlineAt).fromNow()
+        }
+        isOnline={isOnline}
         isLoading={getUserByIdApi.isLoading}
         actions={
           <>

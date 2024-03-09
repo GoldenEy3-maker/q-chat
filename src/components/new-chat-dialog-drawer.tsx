@@ -1,9 +1,11 @@
+import dayjs from "dayjs";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { BiSearch } from "react-icons/bi";
 import { useMediaQuery } from "usehooks-ts";
 import { api } from "~/libs/api";
 import { PagePathMap } from "~/libs/enums";
+import { useOnlineUsersStore } from "~/store/online-users";
 import { Avatar } from "./avatar";
 import { Button } from "./ui/button";
 import {
@@ -29,6 +31,8 @@ import { Skeleton } from "./ui/skeleton";
 export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
+  const onlineUsersStore = useOnlineUsersStore();
+
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
 
@@ -75,29 +79,42 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
           <ScrollArea className="px-6 pb-4">
             {!getAllUsersApi.isLoading ? (
               filteredUsers.length > 0 ? (
-                filteredUsers.map((user) => (
-                  <Button
-                    key={user.id}
-                    variant="ghost"
-                    className="grid h-max w-full flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                    asChild
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <Link href={PagePathMap.Chat + user.id}>
-                      <Avatar
-                        className="row-span-2"
-                        fallback={user.name?.at(0)}
-                        src={user.image}
-                        alt="Аватар пользователя"
-                        isOnline
-                      />
-                      <strong className="truncate">{user.name}</strong>
-                      <span className="truncate text-muted-foreground">
-                        Онлайн
-                      </span>
-                    </Link>
-                  </Button>
-                ))
+                filteredUsers
+                  .sort((a, b) => {
+                    return (
+                      +b.lastOnlineAt.getTime() - +a.lastOnlineAt.getTime()
+                    );
+                  })
+                  .map((user) => {
+                    const isOnline = onlineUsersStore.members.includes(user.id);
+
+                    return (
+                      <Button
+                        key={user.id}
+                        variant="ghost"
+                        className="grid h-max w-full flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
+                        asChild
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <Link href={PagePathMap.Chat + user.id}>
+                          <Avatar
+                            className="row-span-2"
+                            fallback={user.name?.at(0)}
+                            src={user.image}
+                            alt="Аватар пользователя"
+                            isOnline={isOnline}
+                          />
+                          <strong className="truncate">{user.name}</strong>
+                          <span className="truncate text-muted-foreground">
+                            {isOnline
+                              ? "Онлайн"
+                              : "Был(а) в сети " +
+                                dayjs(user.lastOnlineAt).fromNow()}
+                          </span>
+                        </Link>
+                      </Button>
+                    );
+                  })
               ) : (
                 <p className="py-4 text-center">Ничего не найдено</p>
               )
@@ -163,29 +180,35 @@ export const NewChatDialogDrawer: React.FC<React.PropsWithChildren> = ({
           <ScrollArea className="px-4">
             {!getAllUsersApi.isLoading ? (
               filteredUsers.length > 0 ? (
-                filteredUsers.map((user) => (
-                  <Button
-                    key={user.id}
-                    variant="ghost"
-                    className="grid h-max flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
-                    asChild
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <Link href={PagePathMap.Chat + user.id}>
-                      <Avatar
-                        className="row-span-2"
-                        fallback={user.name?.at(0)}
-                        src={user.image}
-                        alt="Аватар пользователя"
-                        isOnline
-                      />
-                      <strong className="truncate">{user.name}</strong>
-                      <span className="truncate text-muted-foreground">
-                        Онлайн
-                      </span>
-                    </Link>
-                  </Button>
-                ))
+                filteredUsers
+                  .sort((a, b) => {
+                    return (
+                      +b.lastOnlineAt.getTime() - +a.lastOnlineAt.getTime()
+                    );
+                  })
+                  .map((user) => (
+                    <Button
+                      key={user.id}
+                      variant="ghost"
+                      className="grid h-max flex-shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-4 px-2 text-left"
+                      asChild
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Link href={PagePathMap.Chat + user.id}>
+                        <Avatar
+                          className="row-span-2"
+                          fallback={user.name?.at(0)}
+                          src={user.image}
+                          alt="Аватар пользователя"
+                          isOnline
+                        />
+                        <strong className="truncate">{user.name}</strong>
+                        <span className="truncate text-muted-foreground">
+                          Онлайн
+                        </span>
+                      </Link>
+                    </Button>
+                  ))
               ) : (
                 <p className="py-4 text-center">Ничего не найдено</p>
               )

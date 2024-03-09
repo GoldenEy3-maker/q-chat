@@ -1,5 +1,4 @@
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 import React, { useRef, useState } from "react";
 import { BiPaperclip, BiSolidSend } from "react-icons/bi";
 import { toast } from "sonner";
@@ -16,7 +15,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   recipient,
   listScrollDownAnchorRef,
 }) => {
-  const router = useRouter();
   const { data: session } = useSession();
   const [textAreaValue, setTextAreaValue] = useState("");
 
